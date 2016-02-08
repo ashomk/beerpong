@@ -6,3 +6,5 @@ Builds
 *.suo
 *.userprefs
 *.unityproj
+!*.dll
+!*.obj
