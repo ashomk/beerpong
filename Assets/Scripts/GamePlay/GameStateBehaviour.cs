@@ -54,6 +54,8 @@ public class GameStateBehaviour : StateBehaviour {
 		DrunkennessMeter.Instance.Clear ();
 		BeerPongInput.Instance.Reset ();
 
+		BeerPongInput.Instance.OnThrowEnd += OnThrowEnd;
+
 		if (BeerPongNetwork.Instance.thisPlayerID == BeerPong.PlayerID.First) { 
 
 			ChangeState (States.WaitToThrow);
@@ -66,7 +68,7 @@ public class GameStateBehaviour : StateBehaviour {
 
 	private void OnThrowEnd () {
 
-		if (GetState () == States.RenderTrail) {
+		if ((States)GetState () == States.RenderTrail) {
 
 			ChangeState (States.BallReleased);
 		}
@@ -136,5 +138,10 @@ public class GameStateBehaviour : StateBehaviour {
 	private void BallReleased_Enter () {
 		
 		BeerPongInput.Instance.SetVisible (false);
+	}
+
+	private void GameOver_Enter () {
+
+		BeerPongInput.Instance.OnThrowEnd -= OnThrowEnd;
 	}
 }
