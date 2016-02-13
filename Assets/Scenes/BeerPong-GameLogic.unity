@@ -96,7 +96,7 @@ GameObject:
   - 114: {fileID: 118242063}
   - 114: {fileID: 118242062}
   m_Layer: 0
-  m_Name: StateMachine
+  m_Name: GameStateMachine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -125,6 +125,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c330cdbc3f8422047867fd5ef339b602, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TableModel: {fileID: 1374772675}
+  GameCamera: {fileID: 1124873714}
 --- !u!114 &118242063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -282,7 +284,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1124873709}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: .0199999996, y: 1, z: -2.67000008}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -333,6 +335,10 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3422ca237b2261b4e85abb9e2a4a6c82, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &1374772675 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 115184, guid: 3422ca237b2261b4e85abb9e2a4a6c82, type: 2}
+  m_PrefabInternal: {fileID: 1374772674}
 --- !u!1 &1424367347
 GameObject:
   m_ObjectHideFlags: 0

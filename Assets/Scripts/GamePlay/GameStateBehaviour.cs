@@ -23,15 +23,25 @@ public class GameStateBehaviour : StateBehaviour {
 		HitOpponentCup, //(Animation for drinking), Drunkeness Meter update & dispatch, Transit to GameOver / CurrentPlayerInactive
 		HitRing, //Expose enter and exit till game logic is implemented
 		MissedOpponentCup, //Direct transition to CurrentPlayerInactive
-		GameOver, //Transit to view 4
+		GameOver, //Transit to view 4 by dispatching a OnGameOver (bool didWin) event
 		CurrentPlayerInactive, //Listen and apply events over the network : render trail, render ball motion, render ring
-		OnHitMyCup
+		OnHitMyCup	// After hitting the cup, it enters this state to show animation from this player's side. 
+					//From here transit to WaitToThrow or GameOver depending the number of cups on current player's side
 
 	}
 
 	void Awake () {
 	
 		Initialize <States> ();
+
+		//TODO: Once the networking component is completed, uncomment the following 
+		//event registration and delete the force invocation of OnCompletePairing();
+		//BeerPongNetwork.Instance.OnCompletePairing += OnCompletePairing;
+		OnCompletePairing ();
+	}
+
+	//This event handler will be registered to BeerPongNetwork component to listen to the pairing event
+	private void OnCompletePairing () {
 
 		ChangeState (States.Init);
 	}
