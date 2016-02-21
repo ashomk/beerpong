@@ -4,12 +4,22 @@ using MonsterLove.StateMachine;
 
 public class GameStateBehaviour : StateBehaviour {
 
+	public GameObject BeerPongTable;
 	public GameObject TableModel;
-	public Transform GameCamera;
+	public GameObject Ball;
+	public Transform GameCameraTransform;
+	public GameObject InvalidPlayerPositionText;
+
+	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.27f);
+	public Vector3 tableLocalScale = new Vector3 (0.6096f, -0.7366f, 2.4384f);
 
 	private BeerPongCup hitCup = null;
 	private PowerUpRing hitRing = null;
 	private BeerPong.PlayerID winnerID = BeerPong.PlayerID.First;
+
+	private Vector3 throwDirection = Vector3.forward;
+	private Quaternion beerPongTableDefaultRotation = Quaternion.identity;
+	private bool didSetDefaultRotation = false;
 	
 	/**
 	 * TODO: Dispatch events to opponent via network if current state != CurrentPlayerInactive
@@ -23,7 +33,7 @@ public class GameStateBehaviour : StateBehaviour {
 		RenderTrail, //Call Render trail method in MotionController, dispatch trail
 		//Trail is defined as a sequence of tuples where each tuple has a position and velocity
 		BallReleased, //On update, follow trail with specified velocity
-		HitOpponentCup, //(Animation for drinking), Drunkeness Meter update & dispatch, Transit to GameOver / CurrentPlayerInactive
+		HitOpponentCup, //(Animation for drinking), Difficulty Meter update & dispatch, Transit to GameOver / CurrentPlayerInactive
 		HitRing, //Expose enter and exit till game logic is implemented
 		MissedOpponentCup, //Broadcast to the opponent that this player's turn is over. Transit to CurrentPlayerInactive
 		GameOver, //Transit to view 4 by dispatching a OnGameOver (bool didWin) event
@@ -41,6 +51,8 @@ public class GameStateBehaviour : StateBehaviour {
 		//event registration and delete the force invocation of OnPairingComplete();
 		//BeerPongNetwork.Instance.OnPairingComplete += OnPairingComplete;
 		OnPairingComplete ();
+
+		InvalidPlayerPositionText.SetActive (false);
 	}
 
 	//This event handler will be registered to BeerPongNetwork component to listen to the pairing event
@@ -57,15 +69,26 @@ public class GameStateBehaviour : StateBehaviour {
 	
 	private void SetUpCamera (BeerPong.PlayerID playerID) {
 
-		//If player 2, rotate the world 180 degree around Y axis, but keep the camera where it already is
-		//TODO: Complete this
+		if (playerID == BeerPong.PlayerID.Second) {
+
+			//Set the default roation, to reset roation on replay
+			if (!didSetDefaultRotation) {
+
+				beerPongTableDefaultRotation = BeerPongTable.transform.rotation;
+				didSetDefaultRotation = true;
+			}
+
+			//Change rotation as needed
+			BeerPongTable.transform.rotation = beerPongTableDefaultRotation;
+			BeerPongTable.transform.localRotation = Quaternion.Euler(BeerPongTable.transform.localRotation.eulerAngles + Vector3.up * 180f);
+		}
 	}
 	
 	private void Init_Enter () {
 
 		SetUpCups ();
 		SetUpCamera (BeerPongNetwork.Instance.thisPlayerID);
-		DrunkennessMeter.Instance.Clear ();
+		DifficultyMeter.Instance.Clear ();
 		BeerPongInput.Instance.Reset ();
 
 		BeerPongInput.Instance.OnThrowEnd += HandleOnThrowEnd;
@@ -119,80 +142,132 @@ public class GameStateBehaviour : StateBehaviour {
 			Debug.LogError ("Unexpected opponent state");
 		}
 	}
-	
-	private void WaitToThrow_Enter () {
-		
-		BeerPongInput.Instance.SetVisible (true);
 
-		//TODO: Render ball with hand on right side
+	private void RenderBallPosition () {
 
-		//Reset only if user is not pressing the button
-		if (!BeerPongInput.Instance.isTouchDown) {
+		//TODO: We might want to slerp on absolute position change
+		Ball.transform.position = GameCameraTransform.TransformPoint (relativeBallStartLocalPosition);
+	}
 
-			BeerPongInput.Instance.Reset ();
-		}
+	private void RenderBallBeforeThrow () {
+
+		RenderBallPosition ();
+
+		//TODO: Sync the ball across the network
 	}
 
 	private bool isUserAtValidPosition {
 
 		get { 
-			return GameCamera.position.z < TableModel.GetComponent<Renderer> ().bounds.min.z;
+			Vector3 ballLocalPosition = BeerPongTable.transform.InverseTransformPoint (Ball.transform.position);
+			return Mathf.Abs (ballLocalPosition.z) > tableLocalScale.z/2;
+		}
+	}
+	
+	private void WaitToThrow_Enter () {
+		
+		BeerPongInput.Instance.SetVisible (true);
+		
+		RenderBallBeforeThrow ();
+		
+		//Reset only if user is not pressing the button
+		if (!BeerPongInput.Instance.isTouchDown) {
+			
+			BeerPongInput.Instance.Reset ();
 		}
 	}
 
 	private void WaitToThrow_Update () {
+		
+		RenderBallBeforeThrow ();
 
 		if (!isUserAtValidPosition) {
 
 			ChangeState (States.InvalidPlayerPosition);
 		}
-		
+
 		if (BeerPongInput.Instance.isTouchDown) {
 			
 			ChangeState (States.RenderTrail);
 		}
 	}
+	
+	private void WaitToThrow_Exit () {
+		
+		RenderBallBeforeThrow ();
+	}
+
+	private void RenderTrail_Enter () {
+		
+		RenderBallBeforeThrow ();
+	}
+
+	private void SetThrowDirection () {
+
+		throwDirection = (GameCameraTransform.position + GameCameraTransform.forward * 5 - Ball.transform.position).normalized;
+
+		//TODO: Wobble the throw direction based on Difficulty Meter level
+	}
 
 	private void RenderTrail_Update () {
+		
+		RenderBallBeforeThrow ();
 
 		if (!isUserAtValidPosition) {
 			
 			ChangeState (States.InvalidPlayerPosition);
 		}
-		
+
 		if (BeerPongInput.Instance.isTouchDown) {
 
-			BallMotionController.Instance.RenderTrail (BeerPongInput.Instance.currentPower);
+			SetThrowDirection ();
+			BallMotionController.Instance.RenderTrail (BeerPongInput.Instance.currentPower, throwDirection);
 		}
+	}
+
+	private void RenderTrail_Exit () {
+		
+		RenderBallBeforeThrow ();
 	}
 
 	private void InvalidPlayerPosition_Enter () {
 
+		RenderBallBeforeThrow ();
+
+		BallMotionController.Instance.ClearTrail ();
+
+		//Show Invalid Position text
+		InvalidPlayerPositionText.SetActive (true);
+
 		BeerPongInput.Instance.SetVisible (false);
-		//TODO: Show invalid position message, clear trail and ball
 	}
 
 	private void InvalidPlayerPosition_Update () {
-		
-		//TODO: Update invalid position message (if necessary)
+
+		RenderBallBeforeThrow ();
+
+		if (isUserAtValidPosition) {
+
+			ChangeState (States.WaitToThrow);
+		}
 	}
 	
 	private void InvalidPlayerPosition_Exit () {
 		
 		BeerPongInput.Instance.SetVisible (true);
-		//TODO: Clear invalid position message
+
+		//Clear Invalid Position text
+		InvalidPlayerPositionText.SetActive (false);
 	}
 	
-	private void BallReleased_Enter () {
-		
-		BeerPongInput.Instance.SetVisible (false);
-	}
+	private bool isBallBelowCupLevel {
 
-	private bool DidBallGoBelowCupLevel () {
+		//TODO: Check if the ball slowed down on the table
+		get {
 
-		//TODO: Check the current Y position of the ball and check if it is
-		//less than (tableHeight + cupHeight)
-		return false;
+			Vector3 ballLocalPosition = BeerPongTable.transform.InverseTransformPoint (Ball.transform.position);
+			return ballLocalPosition.y < tableLocalScale.y;
+		}
 	}
 
 	private bool DidBallHitOpponentCup () {
@@ -208,11 +283,25 @@ public class GameStateBehaviour : StateBehaviour {
 		//TODO: Set the hitRing value if we return true
 		return false;
 	}
-	
+
+	private void BallReleased_Enter () {
+
+		BallMotionController.Instance.ClearTrail ();
+		BeerPongInput.Instance.SetVisible (false);
+
+		//TODO: Trace path as suggested by motion controller
+
+		/****** TODO: Clear this DUMMY CODE till MotionController is completed ******/
+		const float maxVelocity = 10f;
+		Ball.GetComponent<Rigidbody>().velocity = throwDirection.normalized * maxVelocity * BeerPongInput.Instance.currentPower;
+
+		/****** TODO: Clear this DUMMY CODE till MotionController is completed ******/
+	}
+
 	private void BallReleased_Update () {
 
 		//Assumption: All rings are above cup height
-		if (DidBallGoBelowCupLevel ()) {
+		if (isBallBelowCupLevel) {
 
 			ChangeState (States.MissedOpponentCup);
 
@@ -238,7 +327,7 @@ public class GameStateBehaviour : StateBehaviour {
 
 		//TODO: Clear the cup with number:hitCupNumber from the this player's cup list
 		//TODO: Animate clearing cup in every frame
-		//TODO: Update the DifficultyMeter (new name for DrunkennessMeter) 
+		//TODO: Update the DifficultyMeter
 		//TODO: Return true on completion of animation and difficulty meter updation
 		return false;
 	}
