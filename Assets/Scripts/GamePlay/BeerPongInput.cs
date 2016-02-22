@@ -1,51 +1,50 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class BeerPongInput : Singleton <BeerPongInput> {
 
+	public GameObject UISlider;
 	// Use this for initialization
 	void Start () {
-	
 	}
 
-	private float dummyInputStartTime = 0;
-	private const float DUMMY_INPUT_INTERVAL = 2;
 
-	private void DummyInputUpdate () {
+	private void InputUpdate () {
 
 		if ((Input.touchCount == 0 || Input.GetTouch (0).position.x > Screen.width/3) && !Input.GetMouseButton(0)) {
-
+			Touch touch = Input.GetTouch(0);
 			if (isTouchDown) {
 
-				if (OnThrowEnd != null)
-					OnThrowEnd ();
-			}
+			if(touch.phase == TouchPhase.Ended)
+            {
+               OnThrowEnd();
+			   currentPower = GameObject.Find("UISlider").GetComponent <Slider> ().value;
+            }
 
 			isTouchDown = false;
 		
 		} else {
 
 			if (!isTouchDown) {
-
-				dummyInputStartTime = Time.time;
-
-				if (OnThrowStart != null)
-					OnThrowStart ();
-			
-			} else if (OnThrowUpdate != null) {
-
-				OnThrowUpdate ();
-			}
-			
-			currentPower = Mathf.Clamp01 ((Time.time - dummyInputStartTime) / DUMMY_INPUT_INTERVAL);
-			isTouchDown = true;
+				if(touch.phase == TouchPhase.Began)
+           			 {
+                	OnThrowStart();
+                isTouchDown = true;
+            } else  if(touch.phase == TouchPhase.Moved){
+            				OnThrowUpdate();
+							currentPower = GameObject.Find("UISlider").GetComponent <Slider> ().value;
+							isTouchDown = true;
+            		}
 		}
 	}
-	
+}
+}
+
 	// Update is called once per frame
 	void Update () {
 	
-		DummyInputUpdate ();
+		InputUpdate ();
 	}
 
 	//This value must return true if the user is touching any part of the slider (not necessarily the knob)
@@ -71,7 +70,7 @@ public class BeerPongInput : Singleton <BeerPongInput> {
 		//Do any beer pong logic here
 
 
-		gameObject.SetActive (visibility);
+		UISlider.SetActive (visibility);
 	}
 
 	//This method must clear the slider to a state as though the interaction hasn't been started
