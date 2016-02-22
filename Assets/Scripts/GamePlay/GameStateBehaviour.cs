@@ -11,7 +11,7 @@ public class GameStateBehaviour : StateBehaviour {
 	public GameObject InvalidPlayerPositionText;
 
 	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.27f);
-	public Vector3 tableLocalScale = new Vector3 (0.6096f, -0.7366f, 2.4384f);
+	public Vector3 tableLocalScale = new Vector3 (0.6096f, 0.7366f, 2.4384f);
 
 	private BeerPongCup hitCup = null;
 	private PowerUpRing hitRing = null;
