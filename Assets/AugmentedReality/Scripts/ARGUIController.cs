@@ -162,16 +162,17 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     public void OnGUI()
     {
-        Rect distortionButtonRec = new Rect(UI_BUTTON_GAP_X,
-                                            Screen.height - UI_BUTTON_SIZE_Y - UI_BUTTON_GAP_X,
-                                            UI_BUTTON_SIZE_X,
-                                            UI_BUTTON_SIZE_Y);
-        string isOn = m_arCameraPostProcess.enabled ? "Off" : "On";
-        if (GUI.Button(distortionButtonRec,
-                       UI_FONT_SIZE + "Turn Distortion " + isOn + "</size>"))
-        {
-            m_arCameraPostProcess.enabled = !m_arCameraPostProcess.enabled;
-        }
+
+		if (GameObject.FindObjectOfType<ARMarker> () != null) {
+			Rect distortionButtonRec = new Rect (Screen.width - UI_BUTTON_SIZE_X - UI_BUTTON_GAP_X,
+				                           Screen.height - UI_BUTTON_SIZE_Y - UI_BUTTON_GAP_X,
+				                           UI_BUTTON_SIZE_X,
+				                           UI_BUTTON_SIZE_Y);
+			if (GUI.Button (distortionButtonRec,
+				    UI_FONT_SIZE + "Continue" + "</size>")) {
+				//Logic for Continue button goes here
+			}
+		}
 
         if (m_showDebug && m_tangoApplication.HasRequestedPermissions())
         {
@@ -248,11 +249,11 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 
         if (GameObject.FindObjectOfType<ARMarker>() != null)
         {
-            m_hideAllRect = new Rect(Screen.width - UI_BUTTON_SIZE_X - UI_BUTTON_GAP_X,
-                                     Screen.height - UI_BUTTON_SIZE_Y - UI_BUTTON_GAP_X,
-                                     UI_BUTTON_SIZE_X,
-                                     UI_BUTTON_SIZE_Y);
-            if (GUI.Button(m_hideAllRect, "<size=30>Hide All</size>"))
+			m_hideAllRect = new Rect(UI_BUTTON_GAP_X,
+				Screen.height - UI_BUTTON_SIZE_Y - UI_BUTTON_GAP_X,
+				UI_BUTTON_SIZE_X,
+				UI_BUTTON_SIZE_Y);
+            if (GUI.Button(m_hideAllRect, "<size=30>Place Again</size>"))
             {
                 foreach (ARMarker marker in GameObject.FindObjectsOfType<ARMarker>())
                 {
@@ -435,6 +436,10 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     private void _UpdateLocationMarker()
     {
+		if (GameObject.FindObjectOfType<ARMarker> () != null) {
+			return;
+		}
+
         if (Input.touchCount == 1)
         {
             // Single tap -- place new location or select existing location.
