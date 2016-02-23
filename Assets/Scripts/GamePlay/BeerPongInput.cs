@@ -1,96 +1,52 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.EventSystems;
 
-public class BeerPongInput : Singleton <BeerPongInput> {
+public class BeerPongInput : Singleton <BeerPongInput>{
 
-	public GameObject UISlider;
+	public Slider slider;
 
-	private void InputUpdate () {
+	public void PointerUp () {
 
-		if (Input.touchCount == 0 && !Input.GetMouseButton(0)) {
+		if (isTouchDown) {
 
-			Touch touch = Input.GetTouch(0);
+			if (OnThrowEnd != null) {
 
-			if (isTouchDown) {
-
-				if(touch.phase == TouchPhase.Ended)
-	            {
-					if (OnThrowEnd != null) {
-
-						OnThrowEnd();
-					}
-
-					currentPower = UISlider.GetComponent <Slider> ().value;
-	            }
-
-				isTouchDown = false;
-			
-			} else {
-
-				if (!isTouchDown) {
-
-					if(touch.phase == TouchPhase.Began) {
-
-						if (OnThrowStart != null) {
-							
-							OnThrowStart();
-						}
-
-		                isTouchDown = true;
-
-		            } else  if(touch.phase == TouchPhase.Moved){
-
-						if (OnThrowUpdate != null) {
-							
-							OnThrowUpdate();
-						}
-
-						currentPower = UISlider.GetComponent <Slider> ().value;
-						isTouchDown = true;
-        			}
-				}
+					OnThrowEnd();
 			}
+
+			currentPower = slider.value;
+			isTouchDown = false;
 		}
 	}
 
-	//The dummy has been updated to incorporate the UISlider @arpanbadeka has introduced
-	private void DummyInputUpdate () {
+	public void PointerDown(){
 
-		if ((Input.touchCount == 0 || Input.GetTouch (0).position.x > Screen.width/3) && !Input.GetMouseButton(0)) {
+		if (!isTouchDown) {
+			if (OnThrowStart != null) {
 
-			if (isTouchDown) {
-
-				if (OnThrowEnd != null)
-					OnThrowEnd ();
+	   			OnThrowStart();
+	   					
 			}
 
-			isTouchDown = false;
-		
-		} else {
-
-			if (!isTouchDown) {
-
-				if (OnThrowStart != null)
-					OnThrowStart ();
-			
-			} else if (OnThrowUpdate != null) {
-
-				OnThrowUpdate ();
-			}
-			
-			currentPower = UISlider.GetComponent <Slider> ().value;
+			currentPower = slider.value;
 			isTouchDown = true;
 		}
 	}
-	
-	// Update is called once per frame
-	void Update () {
-	
-		//TODO: Call InputUpdate once touch events are listened from the slider
-		//InputUpdate ();
-		DummyInputUpdate ();
+
+	public void onValueChanged () {
+
+		if (isTouchDown) {
+
+			if (OnThrowUpdate != null) {
+
+	   			OnThrowUpdate();
+			}
+			currentPower = slider.value;
+		}
 	}
+
 
 	//This value must return true if the user is touching any part of the slider (not necessarily the knob)
 	public bool isTouchDown {
@@ -112,12 +68,14 @@ public class BeerPongInput : Singleton <BeerPongInput> {
 
 	public void SetVisible (bool visibility) {
 
-		UISlider.SetActive (visibility);
+		slider.gameObject.SetActive (visibility);
 	}
 
 	//This method must clear the slider to a state as though the interaction hasn't been started
 	public void Reset () {
 
-		UISlider.GetComponent<Slider> ().value = 0;
+		slider.value = 0;
 	}
 }
+
+
