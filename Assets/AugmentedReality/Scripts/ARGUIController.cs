@@ -170,6 +170,10 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 				                           UI_BUTTON_SIZE_Y);
 			if (GUI.Button (distortionButtonRec,
 				    UI_FONT_SIZE + "Continue" + "</size>")) {
+
+				GameObject gameElements = GameObject.Find ("GameElements");
+				gameElements.SetActive (true);
+				Debug.Log ("Activated game elements");
 				//Logic for Continue button goes here
 			}
 		}

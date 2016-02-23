@@ -1,10 +1,11 @@
 fileFormatVersion: 2
 guid: 5c055bc2a1f6c6b418af4a8476d97ef1
-timeCreated: 1455164258
+timeCreated: 1456117520
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - UISlider: {fileID: 191714, guid: 82b18059357734e3197d571226b27794, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

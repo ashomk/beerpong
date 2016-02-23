@@ -54,7 +54,7 @@ Material:
       data:
         first:
           name: _Shininess
-        second: .699999988
+        second: 0.7
       data:
         first:
           name: _Fx
@@ -66,23 +66,23 @@ Material:
       data:
         first:
           name: _Cx
-        second: 641.926025
+        second: 641.926
       data:
         first:
           name: _Cy
-        second: 359.115997
+        second: 359.116
       data:
         first:
           name: _K0
-        second: .246231005
+        second: 0.246231
       data:
         first:
           name: _K1
-        second: -.727204025
+        second: -0.727204
       data:
         first:
           name: _K2
-        second: .72606498
+        second: 0.726065
       data:
         first:
           name: _TexWidth

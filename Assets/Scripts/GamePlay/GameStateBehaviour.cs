@@ -7,16 +7,16 @@ public class GameStateBehaviour : StateBehaviour {
 	public GameObject BeerPongTable;
 	public GameObject TableModel;
 	public GameObject Ball;
-	public Transform GameCameraTransform;
 	public GameObject InvalidPlayerPositionText;
 
 	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.27f);
-	public Vector3 tableLocalScale = new Vector3 (0.6096f, -0.7366f, 2.4384f);
+	public Vector3 tableLocalScale = new Vector3 (0.6096f, 0.7366f, 2.4384f);
 
 	private BeerPongCup hitCup = null;
 	private PowerUpRing hitRing = null;
 	private BeerPong.PlayerID winnerID = BeerPong.PlayerID.First;
 
+	private Transform gameCameraTransform;
 	private Vector3 throwDirection = Vector3.forward;
 	private Quaternion beerPongTableDefaultRotation = Quaternion.identity;
 	private bool didSetDefaultRotation = false;
@@ -53,6 +53,9 @@ public class GameStateBehaviour : StateBehaviour {
 		OnPairingComplete ();
 
 		InvalidPlayerPositionText.SetActive (false);
+
+		gameCameraTransform = GameObject.Find ("Tango AR Camera").transform;
+
 	}
 
 	//This event handler will be registered to BeerPongNetwork component to listen to the pairing event
@@ -146,7 +149,7 @@ public class GameStateBehaviour : StateBehaviour {
 	private void RenderBallPosition () {
 
 		//TODO: We might want to slerp on absolute position change
-		Ball.transform.position = GameCameraTransform.TransformPoint (relativeBallStartLocalPosition);
+		Ball.transform.position = gameCameraTransform.TransformPoint (relativeBallStartLocalPosition);
 	}
 
 	private void RenderBallBeforeThrow () {
@@ -204,7 +207,7 @@ public class GameStateBehaviour : StateBehaviour {
 
 	private void SetThrowDirection () {
 
-		throwDirection = (GameCameraTransform.position + GameCameraTransform.forward * 5 - Ball.transform.position).normalized;
+		throwDirection = (gameCameraTransform.position + gameCameraTransform.forward * 5 - Ball.transform.position).normalized;
 
 		//TODO: Wobble the throw direction based on Difficulty Meter level
 	}

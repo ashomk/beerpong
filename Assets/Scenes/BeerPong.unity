@@ -234,6 +234,52 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1001 &846440417
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 462472, guid: 97e10e24f14b941d2927bdb7fe3a3449, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 462472, guid: 97e10e24f14b941d2927bdb7fe3a3449, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 462472, guid: 97e10e24f14b941d2927bdb7fe3a3449, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 462472, guid: 97e10e24f14b941d2927bdb7fe3a3449, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 462472, guid: 97e10e24f14b941d2927bdb7fe3a3449, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 462472, guid: 97e10e24f14b941d2927bdb7fe3a3449, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 462472, guid: 97e10e24f14b941d2927bdb7fe3a3449, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 462472, guid: 97e10e24f14b941d2927bdb7fe3a3449, type: 2}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 116150, guid: 97e10e24f14b941d2927bdb7fe3a3449, type: 2}
+      propertyPath: m_Name
+      value: BeerPongTable
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 97e10e24f14b941d2927bdb7fe3a3449, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &931605798
 GameObject:
   m_ObjectHideFlags: 0
@@ -456,7 +502,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78760276f84c94c678297fc65f4ec855, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_prefabMarker: {fileID: 190262, guid: 868a97e0a6d4548c49b5e0bdc26be4b9, type: 2}
+  m_prefabMarker: {fileID: 116150, guid: 97e10e24f14b941d2927bdb7fe3a3449, type: 2}
   m_prefabTouchEffect: {fileID: 22497430, guid: 5a77b678bf7604d5fb4f0b5399e89224,
     type: 2}
   m_canvas: {fileID: 694750546}

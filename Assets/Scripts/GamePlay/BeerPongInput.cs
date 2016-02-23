@@ -1,16 +1,60 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class BeerPongInput : Singleton <BeerPongInput> {
 
-	// Use this for initialization
-	void Start () {
-	
+	public GameObject UISlider;
+
+	private void InputUpdate () {
+
+		if (Input.touchCount == 0 && !Input.GetMouseButton(0)) {
+
+			Touch touch = Input.GetTouch(0);
+
+			if (isTouchDown) {
+
+				if(touch.phase == TouchPhase.Ended)
+	            {
+					if (OnThrowEnd != null) {
+
+						OnThrowEnd();
+					}
+
+					currentPower = UISlider.GetComponent <Slider> ().value;
+	            }
+
+				isTouchDown = false;
+			
+			} else {
+
+				if (!isTouchDown) {
+
+					if(touch.phase == TouchPhase.Began) {
+
+						if (OnThrowStart != null) {
+							
+							OnThrowStart();
+						}
+
+		                isTouchDown = true;
+
+		            } else  if(touch.phase == TouchPhase.Moved){
+
+						if (OnThrowUpdate != null) {
+							
+							OnThrowUpdate();
+						}
+
+						currentPower = UISlider.GetComponent <Slider> ().value;
+						isTouchDown = true;
+        			}
+				}
+			}
+		}
 	}
 
-	private float dummyInputStartTime = 0;
-	private const float DUMMY_INPUT_INTERVAL = 2;
-
+	//The dummy has been updated to incorporate the UISlider @arpanbadeka has introduced
 	private void DummyInputUpdate () {
 
 		if ((Input.touchCount == 0 || Input.GetTouch (0).position.x > Screen.width/3) && !Input.GetMouseButton(0)) {
@@ -27,8 +71,6 @@ public class BeerPongInput : Singleton <BeerPongInput> {
 
 			if (!isTouchDown) {
 
-				dummyInputStartTime = Time.time;
-
 				if (OnThrowStart != null)
 					OnThrowStart ();
 			
@@ -37,7 +79,7 @@ public class BeerPongInput : Singleton <BeerPongInput> {
 				OnThrowUpdate ();
 			}
 			
-			currentPower = Mathf.Clamp01 ((Time.time - dummyInputStartTime) / DUMMY_INPUT_INTERVAL);
+			currentPower = UISlider.GetComponent <Slider> ().value;
 			isTouchDown = true;
 		}
 	}
@@ -45,6 +87,8 @@ public class BeerPongInput : Singleton <BeerPongInput> {
 	// Update is called once per frame
 	void Update () {
 	
+		//TODO: Call InputUpdate once touch events are listened from the slider
+		//InputUpdate ();
 		DummyInputUpdate ();
 	}
 
@@ -68,13 +112,12 @@ public class BeerPongInput : Singleton <BeerPongInput> {
 
 	public void SetVisible (bool visibility) {
 
-		//Do any beer pong logic here
-
-
-		gameObject.SetActive (visibility);
+		UISlider.SetActive (visibility);
 	}
 
 	//This method must clear the slider to a state as though the interaction hasn't been started
 	public void Reset () {
+
+		UISlider.GetComponent<Slider> ().value = 0;
 	}
 }
