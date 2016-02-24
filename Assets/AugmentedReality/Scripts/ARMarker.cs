@@ -53,21 +53,11 @@ public class ARMarker : MonoBehaviour
     private Animation m_anim;
 
     /// <summary>
-    /// Awake this instance.
-    /// </summary>
-    private void Awake()
-    {
-        // The animation should be started in Awake and not Start so that it plays on its first frame.
-        m_anim = GetComponent<Animation>();
-        m_anim.Play("ARMarkerShow", PlayMode.StopAll);
-    }
-
-    /// <summary>
     /// Plays an animation, then destroys.
     /// </summary>
     private void Hide()
     {
-        m_anim.Play("ARMarkerHide", PlayMode.StopAll);
+  		HideDone();
     }
 
     /// <summary>

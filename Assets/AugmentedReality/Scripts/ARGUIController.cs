@@ -170,6 +170,9 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 				                           UI_BUTTON_SIZE_Y);
 			if (GUI.Button (distortionButtonRec,
 				    UI_FONT_SIZE + "Continue" + "</size>")) {
+
+				BeerPong.Instance.ActivateGame ();
+				Debug.Log ("Activated game elements");
 				//Logic for Continue button goes here
 			}
 		}

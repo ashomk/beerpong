@@ -1,17 +1,17 @@
 fileFormatVersion: 2
-guid: 6c28710ea3d26482eba596282b5e6538
-timeCreated: 1440525069
+guid: 1e989b1f1c6f0b54e8425c00c4f9363d
+timeCreated: 1456265528
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
   fileIDToRecycleName:
-    100000: pCylinder1
-    100002: //RootNode
-    400000: pCylinder1
-    400002: //RootNode
-    2300000: pCylinder1
-    3300000: pCylinder1
-    4300000: pCylinder1
+    100000: //RootNode
+    100002: pap_cup
+    400000: //RootNode
+    400002: pap_cup
+    2300000: pap_cup
+    3300000: pap_cup
+    4300000: pap_cup
   materials:
     importMaterials: 1
     materialName: 0
@@ -68,8 +68,10 @@ ModelImporter:
     legStretch: .0500000007
     feetSpacing: 0
     rootMotionBoneName: 
+    hasTranslationDoF: 0
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   animationType: 0
+  humanoidOversampling: 1
   additionalBone: 0
   userData: 
   assetBundleName: 
