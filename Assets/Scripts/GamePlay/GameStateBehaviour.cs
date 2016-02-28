@@ -12,6 +12,9 @@ public class GameStateBehaviour : StateBehaviour {
 
 	public Dictionary<int,GameObject> dict_cup;
 
+	public float maxVelocity = 7f;
+	public float ballReleaseTimeout = 4f;
+
 	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.27f);
 	private Vector3 tableLocalScale = new Vector3 (0.6096f, 0.7366f, 2.4384f);
 
@@ -24,6 +27,7 @@ public class GameStateBehaviour : StateBehaviour {
 	private Quaternion beerPongTableDefaultRotation = Quaternion.identity;
 	private bool didSetDefaultRotation = false;
 	private Bounds defaultCupBounds = new Bounds();
+	private float ballThrowStartTime;
 	
 	/**
 	 * TODO: Dispatch events to opponent via network if current state != CurrentPlayerInactive
@@ -337,7 +341,8 @@ public class GameStateBehaviour : StateBehaviour {
 		if (BeerPongInput.Instance.isTouchDown) {
 
 			SetThrowDirection ();
-			BallMotionController.Instance.RenderTrail (BeerPongInput.Instance.currentPower, throwDirection);
+			Vector3 initialVelocity = BeerPongInput.Instance.currentPower * throwDirection.normalized * maxVelocity;
+			BallMotionController.Instance.RenderTrail (initialVelocity, Ball.transform.position);
 		}
 	}
 
@@ -404,12 +409,12 @@ public class GameStateBehaviour : StateBehaviour {
 		BallMotionController.Instance.ClearTrail ();
 		BeerPongInput.Instance.SetVisible (false);
 
+		ballThrowStartTime = Time.time;
+
 		//TODO: Trace path as suggested by motion controller
 
 		/****** TODO: Clear this DUMMY CODE till MotionController is completed ******/
-		const float maxVelocity = 10f;
 		Ball.GetComponent<Rigidbody>().velocity = throwDirection.normalized * maxVelocity * BeerPongInput.Instance.currentPower;
-
 		/****** TODO: Clear this DUMMY CODE till MotionController is completed ******/
 	}
 
@@ -423,7 +428,7 @@ public class GameStateBehaviour : StateBehaviour {
 			
 			ChangeState (States.HitRing);
 
-		} else if (isBallBelowMidCupLevel) {
+		} else if (isBallBelowMidCupLevel || Time.time - ballThrowStartTime > ballReleaseTimeout) {
 			
 			ChangeState (States.MissedOpponentCup);
 		}

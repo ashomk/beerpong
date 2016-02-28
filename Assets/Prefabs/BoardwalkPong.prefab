@@ -723,6 +723,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameElements: {fileID: 179784}
   GamePlay: {fileID: 11495050}
+  gravity: {x: 0, y: -5, z: 0}
 --- !u!114 &11451448
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -736,6 +737,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DummyTrailDirection: {fileID: 198856}
   Ball: {fileID: 160662}
+  time_limit: .699999988
+  time_interval: .0199999996
 --- !u!114 &11467156
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -982,6 +985,7 @@ MonoBehaviour:
   Ball: {fileID: 160662}
   InvalidPlayerPositionText: {fileID: 188738}
   cupPrefab: {fileID: 105976, guid: 097dc7f0e86eea64ebf972ad7c697c72, type: 2}
+  maxVelocity: 7
   relativeBallStartLocalPosition: {x: .129999995, y: -0, z: .270000011}
 --- !u!114 &11496458
 MonoBehaviour:
