@@ -3,10 +3,8 @@ using System.Collections.Generic;
 
 public class BallMotionController : Singleton <BallMotionController> {
 
-	public GameObject DummyTrailDirection;
 	public GameObject Ball;
 
-	public float time_limit = 0.7f;
 	public float time_interval = 0.02f;
 	
 	//LineRenderer
@@ -27,14 +25,20 @@ public class BallMotionController : Singleton <BallMotionController> {
 
 		InitializeLineRenderer ();
 		lineRenderer.enabled = false;
-		//DummyTrailDirection.SetActive (false);
 	}
 
-	public MotionData GenerateMotionData (Vector3 u) {
+	public MotionData GenerateMotionData (Vector3 u, float targetY) {
+
 		MotionData motiondata = new MotionData();
 		Vector3 gravityVector = Physics.gravity;
-		// 10 data points in each list
-		for(float t = 0; t < time_limit; t += time_interval) {
+
+		//Target is at a lower height
+		targetY *= -1;
+
+		float discriminant = Mathf.Sqrt (u.y * u.y + 2f * gravityVector.y * targetY);
+		float timeLimit = (-u.y - discriminant) / gravityVector.y;
+
+		for(float t = 0; t < timeLimit; t += time_interval) {
 			Vector3 velocity = u + gravityVector * t;
 			Vector3 distance = u * t + 0.5f * gravityVector * t * t;
 			motiondata.pathLocalPositions.Add (distance);
@@ -54,15 +58,7 @@ public class BallMotionController : Singleton <BallMotionController> {
 		lineRenderer.SetWidth(0.007f, 0.007f);
 	}
 	
-	private void RenderDummyTrail (Vector3 throwDirection) {
-
-		if (!DummyTrailDirection.activeSelf) DummyTrailDirection.SetActive (true);
-		DummyTrailDirection.transform.position = Ball.transform.position;
-		DummyTrailDirection.transform.LookAt (throwDirection * 10000f);
-		DummyTrailDirection.transform.position += throwDirection * DummyTrailDirection.transform.localScale.z / 2;
-	}
-
-	void DrawTrajectory (Vector3 initialVelocity, Vector3 offsetPosition) {
+	void DrawTrajectory (Vector3 initialVelocity, Vector3 offsetPosition, float targetY) {
 
 		if (!lineRenderer.enabled) {
 
@@ -70,7 +66,7 @@ public class BallMotionController : Singleton <BallMotionController> {
 		}
 
 		// retrieve lists from the other class
-		MotionData motiondata2 = GenerateMotionData ( initialVelocity );
+		MotionData motiondata2 = GenerateMotionData (initialVelocity, targetY);
 		lineRenderer.SetVertexCount (motiondata2.pathLocalPositions.Count);
 		
 		for (int j = 0; j < motiondata2.pathLocalPositions.Count; j ++) {
@@ -78,25 +74,16 @@ public class BallMotionController : Singleton <BallMotionController> {
 		}
 	}
 
-	public void RenderTrail (Vector3 initialVelocity, Vector3 offsetPosition) {
+	public void RenderTrail (Vector3 initialVelocity, Vector3 offsetPosition, float targetY) {
 
-		DrawTrajectory (initialVelocity, offsetPosition);
+		DrawTrajectory (initialVelocity, offsetPosition, targetY);
 
 		//TODO: Clear this once the trail renderer is available from Aaron
 		//RenderDummyTrail (throwDirection);
 	}
 
-	private void ClearDummyTrail () {
-
-		DummyTrailDirection.SetActive (false);
-	}
-
-	//TODO: Clear ball trail
 	public void ClearTrail () {
 
 		lineRenderer.enabled = false;
-
-		//TODO: Clear this once the trail renderer is available from Aaron
-		//ClearDummyTrail ();
 	}
 }

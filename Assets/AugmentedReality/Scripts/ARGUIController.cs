@@ -63,6 +63,8 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
     /// </summary>
     public GameObject m_prefabMarker;
 
+	private GameObject m_instantiatedGame;
+
     /// <summary>
     /// The touch effect to place on taps.
     /// </summary>
@@ -157,13 +159,23 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
         }
     }
 
+	private BeerPong beerPongComponent {
+	
+		get {
+
+			if (m_instantiatedGame == null) return null;
+
+			return m_instantiatedGame.GetComponent <BeerPong> ();
+		}
+	}
+
     /// <summary>
     /// Display simple GUI.
     /// </summary>
     public void OnGUI()
     {
 
-		if (GameObject.FindObjectOfType<ARMarker> () != null) {
+		if (GameObject.FindObjectOfType<ARMarker> () != null && beerPongComponent != null && !beerPongComponent.isActive) {
 			Rect distortionButtonRec = new Rect (Screen.width - UI_BUTTON_SIZE_X - UI_BUTTON_GAP_X,
 				                           Screen.height - UI_BUTTON_SIZE_Y - UI_BUTTON_GAP_X,
 				                           UI_BUTTON_SIZE_X,
@@ -171,7 +183,12 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 			if (GUI.Button (distortionButtonRec,
 				    UI_FONT_SIZE + "Continue" + "</size>")) {
 
-				BeerPong.Instance.ActivateGame ();
+				GameObject.DestroyImmediate (m_canvas.gameObject);
+
+				if (beerPongComponent != null) {
+
+					beerPongComponent.ActivateGame ();
+				}
 				Debug.Log ("Activated game elements");
 				//Logic for Continue button goes here
 			}
@@ -250,7 +267,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
             m_selectedRect = new Rect();
         }
 
-        if (GameObject.FindObjectOfType<ARMarker>() != null)
+		if (GameObject.FindObjectOfType<ARMarker>() != null && beerPongComponent != null && !beerPongComponent.isActive)
         {
 			m_hideAllRect = new Rect(UI_BUTTON_GAP_X,
 				Screen.height - UI_BUTTON_SIZE_Y - UI_BUTTON_GAP_X,
@@ -534,22 +551,11 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
             yield break;
         }
 
-        // Ensure the location is always facing the camera.  This is like a LookRotation, but for the Y axis.
-        Vector3 up = plane.normal;
-        Vector3 forward;
-        if (Vector3.Angle(plane.normal, cam.transform.forward) < 175)
-        {
-            Vector3 right = Vector3.Cross(up, cam.transform.forward).normalized;
-            forward = Vector3.Cross(right, up).normalized;
-        }
-        else
-        {
-            // Normal is nearly parallel to camera look direction, the cross product would have too much
-            // floating point error in it.
-            forward = Vector3.Cross(up, cam.transform.right);
-        }
+		Vector3 camForward = Camera.main.transform.forward;
+		camForward.y = 0;
+		camForward.Normalize ();
 
-        Instantiate(m_prefabMarker, planeCenter, Quaternion.LookRotation(forward, up));
+		m_instantiatedGame = (GameObject) Instantiate(m_prefabMarker, planeCenter, Quaternion.LookRotation(camForward, Vector3.up));
         m_selectedMarker = null;
     }
 }

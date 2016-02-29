@@ -3,9 +3,18 @@ using System.Collections;
 
 public class TestGamePlay : MonoBehaviour {
 
+	public GameObject beerPongGame;
+
 	// Use this for initialization
 	void Start () {
 	
-		BeerPong.Instance.ActivateGame ();
+		if (beerPongGame != null) {
+
+			BeerPong pong = beerPongGame.GetComponent <BeerPong> ();
+			if (pong != null) {
+		
+				pong.ActivateGame ();
+			}
+		}
 	}
 }

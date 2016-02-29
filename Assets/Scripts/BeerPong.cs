@@ -1,12 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BeerPong : Singleton <BeerPong> {
+public class BeerPong : MonoBehaviour {
 
 	public GameObject GameElements;
 	public GameStateBehaviour GamePlay;
 
 	public Vector3 gravity = new Vector3 (0, -5f, 0);
+
+	public bool isActive {
+
+		get;
+		private set;
+	}
 
 	public enum PlayerID {
 		
@@ -27,5 +33,7 @@ public class BeerPong : Singleton <BeerPong> {
 		}
 
 		GamePlay.OnPairingComplete ();
+
+		isActive = true;
 	}
 }
