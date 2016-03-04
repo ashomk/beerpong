@@ -16,7 +16,7 @@ public class GameStateBehaviour : StateBehaviour {
 	public float ballReleaseTimeout = 4f;
 	
 	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.27f);
-	private Vector3 tableLocalScale = new Vector3 (0.6096f, 0.7366f, 2.4384f);
+	private Vector3 tableLocalScale = new Vector3 (0.6096f, 0.6125f, 2.4384f);
 	
 	private BeerPongCup hitCup = null;
 	private PowerUpRing hitRing = null;
@@ -325,7 +325,7 @@ public class GameStateBehaviour : StateBehaviour {
 		
 		//Throw at small angle upwards
 		throwDirection = (gameCameraTransform.position + 
-		                  (gameCameraTransform.forward + gameCameraTransform.up*0.15f).normalized * 5 
+		                  (gameCameraTransform.forward + gameCameraTransform.up*0.4f).normalized * 5 
 		                  - Ball.transform.position).normalized;
 		
 		//TODO: Wobble the throw direction based on Difficulty Meter level
@@ -385,12 +385,12 @@ public class GameStateBehaviour : StateBehaviour {
 		InvalidPlayerPositionText.SetActive (false);
 	}
 	
-	private bool isBallBelowMidCupLevel {
+	private bool isBallBelowTableLevel {
 		
 		get {
 			
 			Vector3 ballLocalPosition = BeerPongTable.transform.InverseTransformPoint (Ball.transform.position);
-			return ballLocalPosition.y < tableLocalScale.y + defaultCupBounds.max.y / 2;
+			return ballLocalPosition.y < tableLocalScale.y - Ball.GetComponent <Renderer> ().bounds.size.y;
 		}
 	}
 	
@@ -442,7 +442,7 @@ public class GameStateBehaviour : StateBehaviour {
 			
 			ChangeState (States.HitRing);
 
-		} else if (isBallBelowMidCupLevel || Time.time - ballThrowStartTime > ballReleaseTimeout) {
+		} else if (isBallBelowTableLevel || Time.time - ballThrowStartTime > ballReleaseTimeout) {
 			
 			if (Time.time > ballHitTime + 2.0f) {
 				ChangeState (States.MissedOpponentCup);

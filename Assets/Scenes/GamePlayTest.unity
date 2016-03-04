@@ -300,13 +300,9 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 5461878, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
-      propertyPath: m_CollisionDetection
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5461878, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
-      propertyPath: m_AngularDrag
-      value: 0
+    - target: {fileID: 440166, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: .600000024
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
