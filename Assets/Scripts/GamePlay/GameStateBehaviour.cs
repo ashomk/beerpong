@@ -9,21 +9,23 @@ public class GameStateBehaviour : StateBehaviour {
 	public GameObject Ball;
 	public GameObject InvalidPlayerPositionText;
 	public GameObject cupPrefab;
-	
-	public Dictionary<int,GameObject> dictCup;
+	public GameObject ringPrefab;
+
+	private int playerCupCount = 10;
+	private Dictionary<int,GameObject> dictCup;
 	
 	public float maxVelocity = 7f;
 	public float ballReleaseTimeout = 4f;
 	
 	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.27f);
-	private Vector3 tableLocalScale = new Vector3 (0.6096f, 0.6125f, 2.4384f);
-	
+	public static Vector3 tableLocalScale = new Vector3 (0.6096f, 0.6125f, 2.4384f);
+
 	private BeerPongCup hitCup = null;
-	private PowerUpRing hitRing = null;
 	private BeerPong.PlayerID winnerID = BeerPong.PlayerID.First;
 	private float ballHitTime = 0.0f;
 	private bool isBallMoving = false;
 	private bool isBallInCup = false;
+	private Vector3 rocketRingHitTarget;
 	
 	private Transform gameCameraTransform;
 	private Vector3 throwDirection = Vector3.forward;
@@ -57,29 +59,29 @@ public class GameStateBehaviour : StateBehaviour {
 	void Awake () {
 		
 		Initialize <States> ();
-		
+
 		//TODO: Once the networking component is completed, uncomment the following 
 		//event registration and delete the force invocation of OnPairingComplete();
 		//BeerPongNetwork.Instance.OnPairingComplete += OnPairingComplete;
-		
+
 		//OnPairingComplete ();
-		
+
 		InvalidPlayerPositionText.SetActive (false);
-		
+
 		gameCameraTransform = GameObject.Find ("Tango AR Camera").transform;
-		
+
 	}
-	
+
 	//This event handler will be registered to BeerPongNetwork component to listen to the pairing event
 	public void OnPairingComplete () {
-		
+
 		ChangeState (States.Init);
 	}
-	
+
 	private void SetUpCups () {
-		
-		//Initialize all cups numbered from 0 to 19, where cups 0 to 9 belong to player 1, and 10 to 19 belong to player 2
-		//TODO: Complete this
+
+		//Initialize all cups numbered from 0 to 19, where cups 0 to playerCupCount - 1 
+		//belong to player 1, and playerCupCount to 2*playerCupCount-1 belong to player 2
 		GameObject cup=null;
 		//float y_table = TableModel.transform.position.y;
 		float tableHeight = tableLocalScale.y;//TableModel.GetComponent<Renderer> ().bounds.size.y;
@@ -88,7 +90,7 @@ public class GameStateBehaviour : StateBehaviour {
 		float zSpacing = Mathf.Sqrt (3) / 2;
 		float xOffset = 0.12f ;
 		dictCup = new Dictionary<int,GameObject> ();
-		for (int i = 0,l=6; i < 10; i++,l+=4) {
+		for (int i = 0,l=6; i < playerCupCount; i++,l+=4) {
 			
 			if (i == 0)
 				l = 0;
@@ -127,11 +129,11 @@ public class GameStateBehaviour : StateBehaviour {
 			
 			//	Debug.Log ("position is  " + magnitude);
 		}
-		
-		
-		
-		for (int i = 10,l=6; i < 20; i++,l+=4) {
-			
+
+
+
+		for (int i = playerCupCount,l=6; i < 2*playerCupCount; i++,l+=4) {
+
 			if (i == 10)
 				l = 0;
 			if (i == 14)
@@ -140,13 +142,13 @@ public class GameStateBehaviour : StateBehaviour {
 				l = 5;
 			if (i == 19)
 				l = 7;
-			
+
 			cup= GameObject.Instantiate<GameObject>(cupPrefab);
 			cup.transform.parent = BeerPongTable.transform;
 			
 			float cupOffset =  cup.transform.position.y - cup.GetComponentInChildren<Renderer> ().bounds.min.y;
 			float cupRadius  = defaultCupBounds.extents.x;
-			
+
 			if(i<14)
 				cup.transform.localPosition = new Vector3(tableWidth/2-cupRadius/2-l*cupRadius/2-xOffset,tableHeight+cupOffset,-tableLength/2+zSpacing*cupRadius);
 			
@@ -161,20 +163,44 @@ public class GameStateBehaviour : StateBehaviour {
 			cup.GetComponent<BeerPongCup> ().ball = Ball;
 			cup.GetComponent<BeerPongCup> ().OnHit += OnHitOpponentCup;
 			dictCup.Add (i,cup);
-			
-			
+
+
 			//	Debug.Log ("position is  " + magnitude);
 		}
-		
-		
+
+
 	}
-	
+
+	private void SetUpRings () {
+
+		GameObject ring = GameObject.Instantiate<GameObject>(ringPrefab);
+
+		ring.transform.parent = BeerPongTable.transform;
+
+		ring.transform.localPosition = new Vector3(0,tableLocalScale.y*3/2,0);
+
+		ring.GetComponent<PowerRings> ().OnHitRing += OnHitRing;
+	}
+
+	private void OnRingCrossed()
+	{
+		Vector3 ballPosition = Ball.transform.position;
+	}
+
+	private void OnHitRing()
+	{
+		if ((States)GetState () == States.BallReleased) {
+
+			ChangeState (States.HitRing);
+		}
+	}
+
 	private void OnHitOpponentCup (int cupID) {
-		
-		if ((BeerPongNetwork.Instance.thisPlayerID == BeerPong.PlayerID.First && cupID >= 0 && cupID < 10) ||
-		    (BeerPongNetwork.Instance.thisPlayerID == BeerPong.PlayerID.Second && cupID >= 10 && cupID < 20)) {
-			
-			if ((States)GetState () == States.BallReleased) {
+
+		if ((BeerPongNetwork.Instance.thisPlayerID == BeerPong.PlayerID.First && cupID >= 0 && cupID < playerCupCount) ||
+		    (BeerPongNetwork.Instance.thisPlayerID == BeerPong.PlayerID.Second && cupID >= playerCupCount && cupID < 2*playerCupCount)) {
+
+			if ((States)GetState () == States.BallReleased || (States)GetState () == States.HitRing) {
 				hitCup = dictCup [cupID].GetComponent <BeerPongCup> ();
 				ChangeState (States.HitOpponentCup);
 			} 
@@ -187,16 +213,16 @@ public class GameStateBehaviour : StateBehaviour {
 	}
 	
 	private void SetUpCamera (BeerPong.PlayerID playerID) {
-		
+
 		if (playerID == BeerPong.PlayerID.Second) {
-			
+
 			//Set the default roation, to reset roation on replay
 			if (!didSetDefaultRotation) {
-				
+
 				beerPongTableDefaultRotation = BeerPongTable.transform.rotation;
 				didSetDefaultRotation = true;
 			}
-			
+
 			//Change rotation as needed
 			BeerPongTable.transform.rotation = beerPongTableDefaultRotation;
 			BeerPongTable.transform.localRotation = Quaternion.Euler(BeerPongTable.transform.localRotation.eulerAngles + Vector3.up * 180f);
@@ -204,79 +230,80 @@ public class GameStateBehaviour : StateBehaviour {
 	}
 	
 	private void Init_Enter () {
-		
+
 		SetUpCups ();
 		SetUpCamera (BeerPongNetwork.Instance.thisPlayerID);
+		SetUpRings ();
 		DifficultyMeter.Instance.Clear ();
 		BeerPongInput.Instance.Reset ();
-		
+
 		BeerPongInput.Instance.OnThrowEnd += HandleOnThrowEnd;
-		
+
 		if (BeerPongNetwork.Instance.thisPlayerID == BeerPong.PlayerID.First) { 
-			
+
 			ChangeState (States.WaitToThrow);
-			
+
 		} else {
-			
+
 			ChangeState (States.CurrentPlayerInactive);
 		}
-		
+
 		BeerPongNetwork.Instance.OnOpponentMissedCup += HandleOnOpponentMissedCup;
 		BeerPongNetwork.Instance.OnHitMyCup += HandleOnHitMyCup;
 	}
-	
+
 	private void HandleOnThrowEnd () {
-		
+
 		if ((States)GetState () == States.RenderTrail) {
-			
+
 			ChangeState (States.BallReleased);
-			
+
 		} else {
 			
 			Debug.LogError ("Unexpected state. Check if the input is active in an invalid state.");
 		}
 	}
-	
+
 	private void HandleOnOpponentMissedCup ()
 	{
 		if ((States)GetState () == States.CurrentPlayerInactive) {
-			
+
 			ChangeState (States.WaitToThrow);
-			
+
 		} else {
-			
+
 			Debug.LogError ("Unexpected opponent state");
 		}
 	}
 	
 	private void HandleOnHitMyCup (int cupNumber) {
-		
+
 		if ((States)GetState () == States.CurrentPlayerInactive) {
-			
+
 			hitCup.cupNumber = cupNumber;
 			ChangeState (States.HitMyCup);
-			
+
 		} else {
 			
 			Debug.LogError ("Unexpected opponent state");
 		}
 	}
-	
+
 	private void RenderBallPosition () {
-		
+
 		//TODO: We might want to slerp on absolute position change
 		Ball.transform.position = gameCameraTransform.TransformPoint (relativeBallStartLocalPosition);
 	}
-	
+
 	private void RenderBallBeforeThrow () {
-		
+
 		RenderBallPosition ();
-		
+
 		//TODO: Sync the ball across the network
 	}
-	
+
 	private bool isUserAtValidPosition {
-		
+
 		get { 
 			Vector3 ballLocalPosition = BeerPongTable.transform.InverseTransformPoint (Ball.transform.position);
 			return Mathf.Abs (ballLocalPosition.z) > tableLocalScale.z/2;
@@ -295,16 +322,16 @@ public class GameStateBehaviour : StateBehaviour {
 			BeerPongInput.Instance.Reset ();
 		}
 	}
-	
+
 	private void WaitToThrow_Update () {
 		
 		RenderBallBeforeThrow ();
-		
+
 		if (!isUserAtValidPosition) {
-			
+
 			ChangeState (States.InvalidPlayerPosition);
 		}
-		
+
 		if (BeerPongInput.Instance.isTouchDown) {
 			
 			ChangeState (States.RenderTrail);
@@ -315,64 +342,64 @@ public class GameStateBehaviour : StateBehaviour {
 		
 		RenderBallBeforeThrow ();
 	}
-	
+
 	private void RenderTrail_Enter () {
 		
 		RenderBallBeforeThrow ();
 	}
-	
+
 	private void SetThrowDirection () {
-		
+
 		//Throw at small angle upwards
 		throwDirection = (gameCameraTransform.position + 
 		                  (gameCameraTransform.forward + gameCameraTransform.up*0.4f).normalized * 5 
 		                  - Ball.transform.position).normalized;
-		
+
 		//TODO: Wobble the throw direction based on Difficulty Meter level
 	}
-	
+
 	private void RenderTrail_Update () {
 		
 		RenderBallBeforeThrow ();
-		
+
 		if (!isUserAtValidPosition) {
 			
 			ChangeState (States.InvalidPlayerPosition);
 		}
-		
+
 		if (BeerPongInput.Instance.isTouchDown) {
-			
+
 			SetThrowDirection ();
 			Vector3 initialVelocity = BeerPongInput.Instance.currentPower * throwDirection.normalized * maxVelocity;
 			float targetY = Ball.transform.position.y - BeerPongTable.transform.position.y;
 			BallMotionController.Instance.RenderTrail (initialVelocity, Ball.transform.position, targetY);
 		}
 	}
-	
+
 	private void RenderTrail_Exit () {
 		
 		RenderBallBeforeThrow ();
 	}
-	
+
 	private void InvalidPlayerPosition_Enter () {
-		
+
 		RenderBallBeforeThrow ();
-		
+
 		BallMotionController.Instance.ClearTrail ();
-		
+
 		//Show Invalid Position text
 		InvalidPlayerPositionText.SetActive (true);
-		
+
 		BeerPongInput.Instance.SetVisible (false);
 	}
-	
+
 	private void InvalidPlayerPosition_Update () {
-		
+
 		RenderBallBeforeThrow ();
 		BallMotionController.Instance.ClearTrail ();
 		
 		if (isUserAtValidPosition) {
-			
+
 			ChangeState (States.WaitToThrow);
 		}
 	}
@@ -380,7 +407,7 @@ public class GameStateBehaviour : StateBehaviour {
 	private void InvalidPlayerPosition_Exit () {
 		
 		BeerPongInput.Instance.SetVisible (true);
-		
+
 		//Clear Invalid Position text
 		InvalidPlayerPositionText.SetActive (false);
 	}
@@ -392,20 +419,6 @@ public class GameStateBehaviour : StateBehaviour {
 			Vector3 ballLocalPosition = BeerPongTable.transform.InverseTransformPoint (Ball.transform.position);
 			return ballLocalPosition.y < tableLocalScale.y - Ball.GetComponent <Renderer> ().bounds.size.y;
 		}
-	}
-	
-	private bool DidBallHitOpponentCup () {
-		
-		//TODO: Return true if the ball crossed the rim of an opponent cup. 
-		//TODO: Set the hitCup value if we return true
-		return false;
-	}
-	
-	private bool DidBallHitRing () {
-		
-		//TODO: Return true if the ball crossed any of the active rings 
-		//TODO: Set the hitRing value if we return true
-		return false;
 	}
 	
 	private void BallReleased_Enter () {
@@ -432,24 +445,13 @@ public class GameStateBehaviour : StateBehaviour {
 		}
 		
 		
-		if (DidBallHitOpponentCup ()) {
-			{
-				ChangeState (States.HitOpponentCup);
-				
-			}
-			
-		} else if (DidBallHitRing ()) {
-			
-			ChangeState (States.HitRing);
-
-		} else if (isBallBelowTableLevel || Time.time - ballThrowStartTime > ballReleaseTimeout) {
+		if (isBallBelowTableLevel || Time.time - ballThrowStartTime > ballReleaseTimeout) {
 			
 			if (Time.time > ballHitTime + 2.0f) {
 				ChangeState (States.MissedOpponentCup);
 				isBallInCup = false;
 			}
 		}
-		
 		
 		//TODO: Call motion controller and follow the motion controller path 
 	}
@@ -460,7 +462,7 @@ public class GameStateBehaviour : StateBehaviour {
 
 		if (playerID == BeerPong.PlayerID.Second) {
 
-			for (int i = 0; i < 10; i ++) {
+			for (int i = 0; i < playerCupCount; i ++) {
 
 				if (dictCup.ContainsKey (i)) {
 
@@ -471,7 +473,7 @@ public class GameStateBehaviour : StateBehaviour {
 
 		} else if (playerID == BeerPong.PlayerID.First) {
 			
-			for (int i = 10; i < 20; i ++) {
+			for (int i = playerCupCount; i < 2*playerCupCount; i ++) {
 				
 				if (dictCup.ContainsKey (i)) {
 					
@@ -499,7 +501,7 @@ public class GameStateBehaviour : StateBehaviour {
 		//TODO: Difficulty meter updation
 		return true;
 	}
-	
+
 	private void HitOpponentCup_Enter () {
 		
 		BeerPongNetwork.Instance.OnHitOpponentCup (hitCup.cupNumber);
@@ -514,69 +516,126 @@ public class GameStateBehaviour : StateBehaviour {
 		
 		if (ballHitTime + 2.0f < Time.time) {
 			if (DidAnimateClearingCup ()) {
-				
+
 				if (DidClearCups (BeerPongNetwork.Instance.opponentPlayerID)) {
-					
+			
 					winnerID = BeerPongNetwork.Instance.thisPlayerID;
 					ChangeState (States.GameOver);
-					
+			
 				} else {
 					ChangeState (States.CurrentPlayerInactive);
 				}
 				isBallInCup = false;
-				
+
 			}
 		}
 	}
 	
 	private void HitRing_Enter () {
-		
-		//TODO: Trigger the powerup based on the ring type
+
+		//TODO: Notify this event over network
+
+		//TODO: Trigger the powerup based on the ring type. For now, we only have rocket rings
+
+		int cupIDOffset = 0;
+		if (BeerPongNetwork.Instance.thisPlayerID == BeerPong.PlayerID.Second) {
+
+			cupIDOffset = playerCupCount;
+		}
+
+		int targetCupID = cupIDOffset;
+		foreach (int key in dictCup.Keys) {
+
+			if (key >= cupIDOffset && key < cupIDOffset + playerCupCount) {
+
+				targetCupID = key;
+				break;
+			}
+		}
+
+		GameObject targetCup = dictCup [targetCupID];
+		float ballRadius = Ball.GetComponent<Renderer> ().bounds.extents.y;
+		rocketRingHitTarget = targetCup.GetComponent<BeerPongCup> ().top + ballRadius * Vector3.up;
+
+		Ball.GetComponent <Rigidbody> ().isKinematic = true;
+		Ball.GetComponent <Rigidbody> ().velocity = Vector3.zero;
 	}
-	
-	private void MissedOpponentCup_Enter () {
+
+	private void HitRing_FixedUpdate () {
+
+		float ballDiameter = Ball.GetComponent<Renderer> ().bounds.size.y;
+
+		float xzDistance = Vector3.Scale (rocketRingHitTarget - Ball.transform.position, new Vector3(1, 0, 1)).magnitude;
+		if (xzDistance < ballDiameter * 0.5f) {
 		
-		
-		BeerPongNetwork.Instance.OnIMissedCup ();
-		
-		ChangeState (States.CurrentPlayerInactive);
-		
-	}
-	
-	private void HitMyCup_Update() {
-		
-		
-		if (DidAnimateClearingCup ()) {
+			if (Ball.GetComponent<Rigidbody> ().isKinematic) {
 			
+				Ball.GetComponent<Rigidbody> ().velocity = Vector3.down * maxVelocity * 0.2f;
+				Ball.GetComponent<Rigidbody> ().isKinematic = false;
+			}
+
+		} else {
+
+			Ball.transform.position += maxVelocity * 0.5f * Time.deltaTime * (rocketRingHitTarget - Ball.transform.position).normalized;
+		}
+
+		if (Time.time - ballThrowStartTime > ballReleaseTimeout) {
+			
+			if (Time.time > ballHitTime + 2.0f) {
+				ChangeState (States.MissedOpponentCup);
+				isBallInCup = false;
+			}
+		}
+	}
+
+	private void HitRing_Exit () {
+
+		Ball.GetComponent <Rigidbody> ().isKinematic = false;
+	}
+
+	private void MissedOpponentCup_Enter () {
+
+
+			BeerPongNetwork.Instance.OnIMissedCup ();
+
+			ChangeState (States.CurrentPlayerInactive);
+
+	}
+
+	private void HitMyCup_Update() {
+
+
+		if (DidAnimateClearingCup ()) {
+
 			if (DidClearCups (BeerPongNetwork.Instance.thisPlayerID)) {
 				
 				winnerID = BeerPongNetwork.Instance.opponentPlayerID;
 				ChangeState (States.GameOver);
 				
 			} else {
-				
-				
-				ChangeState (States.WaitToThrow);
-				
+
+
+					ChangeState (States.WaitToThrow);
+
 			}
 		}
 	}
-	
+
 	private void CurrentPlayerInactive_Enter () {
-		
+
 		//TODO: IMPORTANT!! Uncomment below line on completion of play testing, and remove the above line!
 		ChangeState (States.WaitToThrow);
 	}
 	
 	private void GameOver_Enter () {
-		
+
 		BeerPongInput.Instance.OnThrowEnd -= HandleOnThrowEnd;
 		BeerPongNetwork.Instance.OnOpponentMissedCup -= HandleOnOpponentMissedCup;
 		BeerPongNetwork.Instance.OnHitMyCup -= HandleOnHitMyCup;
 		//TODO: Display the Game Over message on screen that winnerID won
-		
+
 	}
-	
+
 	void OnDestroy () {
 		//BeerPongNetwork.Instance.OnPairingComplete -= OnPairingComplete;
 	}

@@ -648,7 +648,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 198262}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c330cdbc3f8422047867fd5ef339b602, type: 3}
+  m_Script: {fileID: 11500000, guid: 6ca47922dbaaac1449cc91a5645f5420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   BeerPongTable: {fileID: 142944}
@@ -656,6 +656,7 @@ MonoBehaviour:
   Ball: {fileID: 182332}
   InvalidPlayerPositionText: {fileID: 130434}
   cupPrefab: {fileID: 105976, guid: 097dc7f0e86eea64ebf972ad7c697c72, type: 2}
+  ringPrefab: {fileID: 178832, guid: c2fc071e6dd00d2419cc279f97c4125e, type: 2}
   maxVelocity: 7
   ballReleaseTimeout: 4
   relativeBallStartLocalPosition: {x: .129999995, y: -0, z: .270000011}

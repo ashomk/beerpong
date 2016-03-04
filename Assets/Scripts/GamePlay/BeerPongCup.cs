@@ -37,6 +37,15 @@ public class BeerPongCup : MonoBehaviour {
 		}
 		
 	}
+
+	public Vector3 top {
+	
+		get {
+
+			Bounds cupBounds = gameObject.GetComponentInChildren<Renderer> ().bounds;
+			return new Vector3 (cupBounds.center.x, cupBounds.max.y, cupBounds.center.z);
+		}
+	}
 	
 	void Update()
 	{

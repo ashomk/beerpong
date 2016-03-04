@@ -27,7 +27,7 @@ public class BallMotionController : Singleton <BallMotionController> {
 		lineRenderer.enabled = false;
 	}
 
-	public MotionData GenerateMotionData (Vector3 u, float targetY) {
+	private MotionData GenerateGravitationalMotionData (Vector3 u, float targetY) {
 
 		MotionData motiondata = new MotionData();
 		Vector3 gravityVector = Physics.gravity;
@@ -66,7 +66,7 @@ public class BallMotionController : Singleton <BallMotionController> {
 		}
 
 		// retrieve lists from the other class
-		MotionData motiondata2 = GenerateMotionData (initialVelocity, targetY);
+		MotionData motiondata2 = GenerateGravitationalMotionData (initialVelocity, targetY);
 		lineRenderer.SetVertexCount (motiondata2.pathLocalPositions.Count);
 		
 		for (int j = 0; j < motiondata2.pathLocalPositions.Count; j ++) {
