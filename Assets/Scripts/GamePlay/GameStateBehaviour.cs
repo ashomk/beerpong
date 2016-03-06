@@ -21,7 +21,7 @@ public class GameStateBehaviour : StateBehaviour {
 	public PowerUpRing hitRing;
 	
 	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.27f);
-	public static Vector3 tableLocalScale = new Vector3 (0.6096f, 0.6125f, 2.4384f);
+	public static Vector3 tableLocalScale = new Vector3 (0.69f, 0.6125f, 1.955f);
 
 	private BeerPongCup hitCup = null;
 	private BeerPong.PlayerID winnerID = BeerPong.PlayerID.First;
@@ -527,7 +527,7 @@ public class GameStateBehaviour : StateBehaviour {
 
 			Rigidbody cupRigidBody = hitCup.gameObject.GetComponentInChildren<Rigidbody> ();
 			Vector3 xzPosition = Vector3.Scale (cupRigidBody.transform.position - tableBounds.center, new Vector3(1,0,1));
-			cupRigidBody.velocity += Physics.gravity.magnitude * 0.1f * xzPosition.normalized;
+			cupRigidBody.velocity += Physics.gravity.magnitude * 0.15f * xzPosition.normalized;
 			cupRigidBody.angularVelocity = new Vector3 (Random.value, Random.value, Random.value) * 5f;
 			threwCup = true;
 		}

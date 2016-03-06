@@ -261,6 +261,56 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
+--- !u!1001 &1276346576
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: -9.10999966
+      objectReference: {fileID: 0}
+    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: .436318547
+      objectReference: {fileID: 0}
+    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: .899792254
+      objectReference: {fileID: 0}
+    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 130434, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 193560, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
+  m_IsPrefabParent: 0
 --- !u!1 &1764764611
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,46 +389,4 @@ Transform:
 --- !u!1 &2047139431 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 142944, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
-  m_PrefabInternal: {fileID: 2136396242}
---- !u!1001 &2136396242
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: -9.10999966
-      objectReference: {fileID: 0}
-    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: .436318547
-      objectReference: {fileID: 0}
-    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: .899792254
-      objectReference: {fileID: 0}
-    - target: {fileID: 424746, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: 4ffd482ff56223648aba7c0d2fbd46ba, type: 2}
-  m_IsPrefabParent: 0
+  m_PrefabInternal: {fileID: 1276346576}

@@ -18,14 +18,10 @@ public class Obstacle : MonoBehaviour {
 	public Color onHitColor = Color.yellow;
 	public Color onInvisibilityColor = new Color (0, 0, 0, 0);
 	
-	void Awake () {
-		
-		transform.localRotation = transform.rotation;
-	}
-	
 	void Start () {
 		
 		transform.localPosition = (GameStateBehaviour.tableLocalScale.y + GetComponent<Renderer> ().bounds.size.y) * Vector3.up;
+		transform.localRotation = transform.rotation;
 		baseColor = GetComponent<Renderer> ().material.color;
 		GetComponent<Renderer> ().material.color = onInvisibilityColor;
 	}

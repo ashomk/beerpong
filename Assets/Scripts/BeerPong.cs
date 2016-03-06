@@ -4,6 +4,7 @@ using System.Collections;
 public class BeerPong : MonoBehaviour {
 
 	public GameObject GameElements;
+	public GameObject Canvas;
 	public GameStateBehaviour GamePlay;
 
 	public Vector3 gravity = new Vector3 (0, -5f, 0);
@@ -29,6 +30,7 @@ public class BeerPong : MonoBehaviour {
 	private void Awake () {
 
 		Physics.gravity = gravity;
+		Canvas.transform.parent = null;
 	}
 
 	public void ActivateGame () {
@@ -42,5 +44,10 @@ public class BeerPong : MonoBehaviour {
 
 		activationTime = Time.time;
 		isActive = true;
+	}
+
+	private void OnDestroy () {
+	
+		Destroy (Canvas);
 	}
 }
