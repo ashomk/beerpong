@@ -8,6 +8,6 @@ PhysicMaterial:
   m_Name: HardTable
   dynamicFriction: .600000024
   staticFriction: .600000024
-  bounciness: .600000024
+  bounciness: .699999988
   frictionCombine: 3
   bounceCombine: 0
