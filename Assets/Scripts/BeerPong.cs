@@ -14,6 +14,12 @@ public class BeerPong : MonoBehaviour {
 		private set;
 	}
 
+	public float activationTime {
+	
+		get;
+		private set;
+	}
+
 	public enum PlayerID {
 		
 		First = 1,
@@ -34,6 +40,7 @@ public class BeerPong : MonoBehaviour {
 
 		GamePlay.OnPairingComplete ();
 
+		activationTime = Time.time;
 		isActive = true;
 	}
 }

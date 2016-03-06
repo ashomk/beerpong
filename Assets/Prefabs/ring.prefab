@@ -45,7 +45,7 @@ Transform:
   m_GameObject: {fileID: 178832}
   m_LocalRotation: {x: .500000119, y: .5, z: .49999997, w: .499999911}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .200000003, y: .00567141222, z: .200000003}
+  m_LocalScale: {x: .150114998, y: .0300229993, z: .150114998}
   m_Children:
   - {fileID: 499888}
   m_Father: {fileID: 0}
@@ -56,9 +56,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184660}
-  m_LocalRotation: {x: -8.94069672e-08, y: -.707106709, z: 8.94069672e-08, w: .707106829}
+  m_LocalRotation: {x: -8.19563937e-08, y: -.707106709, z: 8.94069672e-08, w: .707106829}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 13.5790548, y: 482.871552, z: 13.5790577}
+  m_LocalScale: {x: 13.5790548, y: 68.4640884, z: 13.5790586}
   m_Children: []
   m_Father: {fileID: 411380}
   m_RootOrder: 0
@@ -160,10 +160,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 178832}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bedcd5b3b972fd843a7bdeded64377cf, type: 3}
+  m_Script: {fileID: 11500000, guid: 0af71df8c41a8944fb5f14dd4987b550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ringSpeed: 1
+  hoop: {fileID: 184660}
+  ringFrequency: 1
+  lastHitTime: 0
+  onHitColor: {r: 1, g: .808000028, b: 0, a: 1}
+  onInvisibilityColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -181,6 +185,18 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: onHitColor.g
+      value: .745999992
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: onHitColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: onHitColor.r
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []

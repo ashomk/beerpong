@@ -10,12 +10,15 @@ public class GameStateBehaviour : StateBehaviour {
 	public GameObject InvalidPlayerPositionText;
 	public GameObject cupPrefab;
 	public GameObject ringPrefab;
+	public GameObject obstaclePrefab;
 
 	private int playerCupCount = 10;
 	private Dictionary<int,GameObject> dictCup;
 	
 	public float maxVelocity = 7f;
 	public float ballReleaseTimeout = 4f;
+
+	public PowerUpRing hitRing;
 	
 	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.27f);
 	public static Vector3 tableLocalScale = new Vector3 (0.6096f, 0.6125f, 2.4384f);
@@ -84,7 +87,7 @@ public class GameStateBehaviour : StateBehaviour {
 		//belong to player 1, and playerCupCount to 2*playerCupCount-1 belong to player 2
 		GameObject cup=null;
 		//float y_table = TableModel.transform.position.y;
-		float tableHeight = tableLocalScale.y;//TableModel.GetComponent<Renderer> ().bounds.size.y;
+		float tableHeight = tableLocalScale.y + 0.005f;//TableModel.GetComponent<Renderer> ().bounds.size.y;
 		float tableWidth = tableLocalScale.x ; //TableModel.GetComponent<Renderer> ().bounds.size.x;
 		float tableLength =tableLocalScale.z ; //TableModel.GetComponent<Renderer> ().bounds.size.z;
 		float zSpacing = Mathf.Sqrt (3) / 2;
@@ -172,25 +175,35 @@ public class GameStateBehaviour : StateBehaviour {
 	}
 
 	private void SetUpRings () {
-
+		
 		GameObject ring = GameObject.Instantiate<GameObject>(ringPrefab);
-
+		
 		ring.transform.parent = BeerPongTable.transform;
-
+		
 		ring.transform.localPosition = new Vector3(0,tableLocalScale.y*3/2,0);
-
-		ring.GetComponent<PowerRings> ().OnHitRing += OnHitRing;
+		
+		ring.GetComponent<PowerUpRing> ().OnHitRing += OnHitRing;
 	}
-
+	
+	private void SetUpObstacles () {
+		
+		GameObject obstacle = GameObject.Instantiate<GameObject>(obstaclePrefab);
+		
+		obstacle.transform.parent = BeerPongTable.transform;
+		
+		obstacle.transform.localPosition = new Vector3(0,tableLocalScale.y*3/2,0);
+	}
+	
 	private void OnRingCrossed()
 	{
 		Vector3 ballPosition = Ball.transform.position;
 	}
 
-	private void OnHitRing()
+	private void OnHitRing(PowerUpRing ring)
 	{
 		if ((States)GetState () == States.BallReleased) {
 
+			hitRing = ring;
 			ChangeState (States.HitRing);
 		}
 	}
@@ -234,6 +247,7 @@ public class GameStateBehaviour : StateBehaviour {
 		SetUpCups ();
 		SetUpCamera (BeerPongNetwork.Instance.thisPlayerID);
 		SetUpRings ();
+		SetUpObstacles ();
 		DifficultyMeter.Instance.Clear ();
 		BeerPongInput.Instance.Reset ();
 
@@ -486,20 +500,45 @@ public class GameStateBehaviour : StateBehaviour {
 		return didClear;
 	}
 	
-	private bool AnimateClearingCup () {
+	private bool threwCup = false;
+	private void AnimateClearingCup () {
 		
-		//TODO: Animate clearing cup in every frame. Return true only on completion of animation
 		dictCup.Remove (hitCup.cupNumber);
-		Destroy (hitCup.gameObject);
-		
-		return true;
+
+		MeshCollider collider = hitCup.GetComponentInChildren<MeshCollider> ();
+		collider.convex = true;
+		collider.gameObject.transform.position += Vector3.up * 0.5f * hitCup.GetComponentInChildren<Renderer> ().bounds.size.y;
+		collider.gameObject.AddComponent<Rigidbody> ().velocity = -Physics.gravity * 0.5f;
+		collider.GetComponent<Rigidbody> ().mass = 0.2f;
+
+		threwCup = false;
 	}
-	
+
 	private bool DidAnimateClearingCup () {
 		
-		if (!AnimateClearingCup ()) return false;
-		//TODO: Difficulty meter updation
-		return true;
+		if (dictCup.ContainsKey (hitCup.cupNumber)) {
+			AnimateClearingCup ();
+		}
+
+		Bounds tableBounds = TableModel.GetComponentInChildren<Renderer> ().bounds;
+
+		if (tableBounds.max.y + hitCup.GetComponentInChildren<Renderer> ().bounds.size.y * 1.5f < 
+		    hitCup.GetComponentInChildren<Renderer> ().bounds.min.y && !threwCup) {
+
+			Rigidbody cupRigidBody = hitCup.gameObject.GetComponentInChildren<Rigidbody> ();
+			Vector3 xzPosition = Vector3.Scale (cupRigidBody.transform.position - tableBounds.center, new Vector3(1,0,1));
+			cupRigidBody.velocity += Physics.gravity.magnitude * 0.1f * xzPosition.normalized;
+			cupRigidBody.angularVelocity = new Vector3 (Random.value, Random.value, Random.value) * 5f;
+			threwCup = true;
+		}
+
+		if (tableBounds.max.y - tableLocalScale.y + hitCup.GetComponentInChildren<Renderer> ().bounds.size.y * 1.5f > 
+		    hitCup.GetComponentInChildren<Renderer> ().bounds.min.y) {
+			
+			return true;
+		}
+
+		return false;
 	}
 
 	private void HitOpponentCup_Enter () {
@@ -563,6 +602,13 @@ public class GameStateBehaviour : StateBehaviour {
 
 	private void HitRing_FixedUpdate () {
 
+		float speedFactor = 1f;
+		if (Time.time - hitRing.lastHitTime < PowerUpRing.HIT_WAIT_TIME / 2) {
+
+			speedFactor = 0.1f;
+			return;
+		}
+
 		float ballDiameter = Ball.GetComponent<Renderer> ().bounds.size.y;
 
 		float xzDistance = Vector3.Scale (rocketRingHitTarget - Ball.transform.position, new Vector3(1, 0, 1)).magnitude;
@@ -570,13 +616,12 @@ public class GameStateBehaviour : StateBehaviour {
 		
 			if (Ball.GetComponent<Rigidbody> ().isKinematic) {
 			
-				Ball.GetComponent<Rigidbody> ().velocity = Vector3.down * maxVelocity * 0.2f;
 				Ball.GetComponent<Rigidbody> ().isKinematic = false;
 			}
 
 		} else {
 
-			Ball.transform.position += maxVelocity * 0.5f * Time.deltaTime * (rocketRingHitTarget - Ball.transform.position).normalized;
+			Ball.transform.position += maxVelocity * 0.5f * Time.deltaTime * (rocketRingHitTarget - Ball.transform.position) * speedFactor;
 		}
 
 		if (Time.time - ballThrowStartTime > ballReleaseTimeout) {
