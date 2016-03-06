@@ -11,6 +11,7 @@ public class Obstacle : MonoBehaviour {
 	private float visibilityChangeTime = 0;
 	
 	public float lastHitTime = 0;
+	private float randomActivaitionOffset;
 	
 	private bool visibility = false;
 	private Color baseColor;
@@ -24,6 +25,7 @@ public class Obstacle : MonoBehaviour {
 		transform.localRotation = transform.rotation;
 		baseColor = GetComponent<Renderer> ().material.color;
 		GetComponent<Renderer> ().material.color = onInvisibilityColor;
+		randomActivaitionOffset = Random.Range (0, 30);
 	}
 	
 	private void UpdateVisibility() {
@@ -47,7 +49,7 @@ public class Obstacle : MonoBehaviour {
 		UpdateVisibility ();
 		
 		if (GetComponentInParent<BeerPong> ().isActive &&
-		    Time.time - GetComponentInParent<BeerPong> ().activationTime > 60.0f) {
+		    Time.time - GetComponentInParent<BeerPong> ().activationTime > 60.0f + randomActivaitionOffset) {
 			
 			if (visiblityToggleTime < Time.time) {
 				
@@ -77,7 +79,7 @@ public class Obstacle : MonoBehaviour {
 					deltaSlerpFactor = 0.1f;
 				}
 				
-				targetLocalPosition = new Vector3 (-0.7f * Mathf.Sin (Time.time * obstacleFrequency * 1.2f),
+				targetLocalPosition = new Vector3 (-0.7f * Mathf.Sin (Time.time * obstacleFrequency * 1.2f + randomActivaitionOffset),
 				                                   GameStateBehaviour.tableLocalScale.y * 2f + 0.9f * Mathf.Sin (Time.time * obstacleFrequency * 5f), 
 				                                   0.4f * Mathf.Sin (Time.time * obstacleFrequency * 3f));
 			} else {

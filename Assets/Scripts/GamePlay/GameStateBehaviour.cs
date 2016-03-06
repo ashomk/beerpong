@@ -186,12 +186,13 @@ public class GameStateBehaviour : StateBehaviour {
 	}
 	
 	private void SetUpObstacles () {
-		
-		GameObject obstacle = GameObject.Instantiate<GameObject>(obstaclePrefab);
-		
-		obstacle.transform.parent = BeerPongTable.transform;
-		
-		obstacle.transform.localPosition = new Vector3(0,tableLocalScale.y*3/2,0);
+
+		for (int i = 0; i < 2; i ++) {
+
+			GameObject obstacle = GameObject.Instantiate<GameObject> (obstaclePrefab);
+			obstacle.transform.parent = BeerPongTable.transform;
+			obstacle.transform.localPosition = new Vector3 (0, tableLocalScale.y * 3 / 2, 0);
+		}
 	}
 	
 	private void OnRingCrossed()
@@ -385,7 +386,7 @@ public class GameStateBehaviour : StateBehaviour {
 
 			SetThrowDirection ();
 			Vector3 initialVelocity = BeerPongInput.Instance.currentPower * throwDirection.normalized * maxVelocity;
-			float targetY = Ball.transform.position.y - BeerPongTable.transform.position.y;
+			float targetY = Ball.transform.position.y - BeerPongTable.transform.position.y - tableLocalScale.y;
 			BallMotionController.Instance.RenderTrail (initialVelocity, Ball.transform.position, targetY);
 		}
 	}

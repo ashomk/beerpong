@@ -8,6 +8,6 @@ PhysicMaterial:
   m_Name: BouncyBall
   dynamicFriction: .600000024
   staticFriction: .600000024
-  bounciness: .649999976
+  bounciness: .699999988
   frictionCombine: 3
   bounceCombine: 1
