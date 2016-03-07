@@ -119,6 +119,9 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 	private bool m_isTouching = false;
 	private bool m_didTouchNow = false;
 	private Vector3 m_offset;
+
+
+
 	
 	/// <summary>
 	/// Unity Start() callback, we set up some initial values here.
@@ -177,7 +180,15 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 	/// </summary>
 	public void OnGUI()
 	{
-		
+
+		if (GameObject.FindObjectOfType<ARMarker> () == null) {
+
+			Texture2D placeTableTexture = (Texture2D)Resources.Load ("PlaceTable");
+			Rect playRect = new Rect((Screen.width - 1206)/2 , 20, 1206, 109);
+			GUI.Button (playRect, placeTableTexture);
+
+		}
+
 		if (GameObject.FindObjectOfType<ARMarker> () != null && beerPongComponent != null && !beerPongComponent.isActive) {
 			Rect distortionButtonRec = new Rect (Screen.width - UI_BUTTON_SIZE_X - UI_BUTTON_GAP_X,
 			                                     Screen.height - UI_BUTTON_SIZE_Y - UI_BUTTON_GAP_X,
@@ -272,6 +283,14 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 		
 		if (GameObject.FindObjectOfType<ARMarker>() != null && beerPongComponent != null && !beerPongComponent.isActive)
 		{
+			
+
+			Texture2D placeTableTexture = (Texture2D)Resources.Load ("DragTable");
+			Rect playRect = new Rect((Screen.width - 790)/2 , 20, 790, 109);
+			GUI.Button (playRect, placeTableTexture);
+
+
+
 			m_hideAllRect = new Rect(UI_BUTTON_GAP_X,
 			                         Screen.height - UI_BUTTON_SIZE_Y - UI_BUTTON_GAP_X,
 			                         UI_BUTTON_SIZE_X,
