@@ -8,13 +8,18 @@ public class GameStateBehaviour : StateBehaviour {
 	public GameObject TableModel;
 	public GameObject Ball;
 	public GameObject InvalidPlayerPositionText;
+	public GameObject YouWonText;
+	public GameObject YouLoseText;
+	public GameObject ReplayButton;
+
 	public GameObject cupPrefab;
 	public GameObject ringPrefab;
 	public GameObject obstaclePrefab;
 
 	private int playerCupCount = 10;
 	private Dictionary<int,GameObject> dictCup;
-	
+	private List<GameObject> playRoundObject = new List<GameObject> ();
+
 	public float maxVelocity = 7f;
 	public float ballReleaseTimeout = 4f;
 
@@ -70,6 +75,9 @@ public class GameStateBehaviour : StateBehaviour {
 		//OnPairingComplete ();
 
 		InvalidPlayerPositionText.SetActive (false);
+		YouWonText.SetActive (false);
+		YouLoseText.SetActive (false);
+		ReplayButton.SetActive (false);
 
 		gameCameraTransform = GameObject.Find ("Tango AR Camera").transform;
 
@@ -105,6 +113,7 @@ public class GameStateBehaviour : StateBehaviour {
 				l = 7;
 			
 			cup = GameObject.Instantiate<GameObject>(cupPrefab);
+			playRoundObject.Add (cup);
 			cup.transform.parent = BeerPongTable.transform;
 			
 			if (i == 0) {
@@ -146,7 +155,8 @@ public class GameStateBehaviour : StateBehaviour {
 			if (i == 19)
 				l = 7;
 
-			cup= GameObject.Instantiate<GameObject>(cupPrefab);
+			cup = GameObject.Instantiate<GameObject>(cupPrefab);
+			playRoundObject.Add (cup);
 			cup.transform.parent = BeerPongTable.transform;
 			
 			float cupOffset =  cup.transform.position.y - cup.GetComponentInChildren<Renderer> ().bounds.min.y;
@@ -177,7 +187,7 @@ public class GameStateBehaviour : StateBehaviour {
 	private void SetUpRings () {
 		
 		GameObject ring = GameObject.Instantiate<GameObject>(ringPrefab);
-		
+		playRoundObject.Add (ring);
 		ring.transform.parent = BeerPongTable.transform;
 		
 		ring.transform.localPosition = new Vector3(0,tableLocalScale.y*3/2,0);
@@ -190,6 +200,7 @@ public class GameStateBehaviour : StateBehaviour {
 		for (int i = 0; i < 2; i ++) {
 
 			GameObject obstacle = GameObject.Instantiate<GameObject> (obstaclePrefab);
+			playRoundObject.Add (obstacle);
 			obstacle.transform.parent = BeerPongTable.transform;
 			obstacle.transform.localPosition = new Vector3 (0, tableLocalScale.y * 3 / 2, 0);
 		}
@@ -242,13 +253,29 @@ public class GameStateBehaviour : StateBehaviour {
 			BeerPongTable.transform.localRotation = Quaternion.Euler(BeerPongTable.transform.localRotation.eulerAngles + Vector3.up * 180f);
 		}
 	}
+
+	private void DestroyPreviousRoundObjects () {
+
+		foreach (GameObject obj in playRoundObject) {
+		
+			Destroy (obj);
+		}
+	}
 	
 	private void Init_Enter () {
+
+		DestroyPreviousRoundObjects ();
 
 		SetUpCups ();
 		SetUpCamera (BeerPongNetwork.Instance.thisPlayerID);
 		SetUpRings ();
 		SetUpObstacles ();
+
+		InvalidPlayerPositionText.SetActive (false);
+		YouWonText.SetActive (false);
+		YouLoseText.SetActive (false);
+		ReplayButton.SetActive (false);
+
 		DifficultyMeter.Instance.Clear ();
 		BeerPongInput.Instance.Reset ();
 
@@ -443,8 +470,6 @@ public class GameStateBehaviour : StateBehaviour {
 
 		ballThrowStartTime = Time.time;
 
-		//TODO: Trace path as suggested by motion controller
-
 		/****** TODO: Clear this DUMMY CODE till MotionController is completed ******/
 		Ball.GetComponent<Rigidbody>().velocity = throwDirection.normalized * maxVelocity * BeerPongInput.Instance.currentPower;
 		/****** TODO: Clear this DUMMY CODE till MotionController is completed ******/
@@ -467,8 +492,6 @@ public class GameStateBehaviour : StateBehaviour {
 				isBallInCup = false;
 			}
 		}
-		
-		//TODO: Call motion controller and follow the motion controller path 
 	}
 	
 	private bool DidClearCups (BeerPong.PlayerID playerID) {
@@ -678,8 +701,28 @@ public class GameStateBehaviour : StateBehaviour {
 		BeerPongInput.Instance.OnThrowEnd -= HandleOnThrowEnd;
 		BeerPongNetwork.Instance.OnOpponentMissedCup -= HandleOnOpponentMissedCup;
 		BeerPongNetwork.Instance.OnHitMyCup -= HandleOnHitMyCup;
-		//TODO: Display the Game Over message on screen that winnerID won
 
+		if (winnerID == BeerPongNetwork.Instance.thisPlayerID) {
+		
+			YouWonText.SetActive (true);
+		
+		} else {
+		
+			YouLoseText.SetActive (true);
+		}
+
+		ReplayButton.SetActive (true);
+
+		//TODO: Display the button for quit
+
+	}
+
+	public void OnClickPlayAgain () {
+	
+		if ((States)GetState () == States.GameOver) {
+		
+			ChangeState (States.Init);
+		}
 	}
 
 	void OnDestroy () {
