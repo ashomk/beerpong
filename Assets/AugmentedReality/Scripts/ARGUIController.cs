@@ -118,6 +118,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 	private bool m_showDebug = false;
 	private bool m_isTouching = false;
 	private bool m_didTouchNow = false;
+	private bool m_placingTable = false;
 	private Vector3 m_offset;
 
 
@@ -478,7 +479,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 	/// </summary>
 	private void _UpdateLocationMarker()
 	{
-		if (beerPongComponent != null && beerPongComponent.isActive)
+		if ((beerPongComponent != null && beerPongComponent.isActive) || m_placingTable)
 			return;
 
 		if (Input.touchCount != 0) {
@@ -493,8 +494,9 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 			Camera cam = Camera.main;
 			RaycastHit hitInfo;
 			var ray = cam.ScreenPointToRay (t.position);
-			
-			
+
+
+			//Dragging
 			if (GameObject.FindObjectOfType<ARMarker> () != null) {
 				
 				Debug.Log ("Marker not null");
@@ -506,26 +508,39 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 					GameObject tapped = hitInfo.collider.gameObject;
 					if (tapped.transform.parent == m_instantiatedGame.transform) {
 						//theObject = hitInfo.transform;
-						
+//						
+//						if (m_didTouchNow)
+//							m_offset = hitInfo.point - m_instantiatedGame.transform.position;
+//						
+//						float t1 = -(m_instantiatedGame.transform.position.y + m_offset.y) / ray.direction.y;
+//						Vector3 newPosition = -ray.direction * t1;
+//						
+//						
+//						//m_instantiatedGame.transform.position = new Vector3 (ray.origin.x + offSet.x, m_instantiatedGame.transform.position.y, ray.origin.z + offSet.z);     // Only move the object on a 2D plane.
+//						m_instantiatedGame.transform.position = newPosition - m_offset;
+
+
+
+
 						if (m_didTouchNow)
 							m_offset = hitInfo.point - m_instantiatedGame.transform.position;
 						
-						float t1 = -(m_instantiatedGame.transform.position.y + m_offset.y) / ray.direction.y;
-						Vector3 newPosition = -ray.direction * t1;
-						
-						
-						//m_instantiatedGame.transform.position = new Vector3 (ray.origin.x + offSet.x, m_instantiatedGame.transform.position.y, ray.origin.z + offSet.z);     // Only move the object on a 2D plane.
-						m_instantiatedGame.transform.position = newPosition - m_offset;
+
+						float t1 = (m_instantiatedGame.transform.position.y - hitInfo.point.y + m_offset.y) / ray.direction.y;
+						m_instantiatedGame.transform.position = ray.direction * t1 + hitInfo.point - m_offset;
+
+
 						Debug.Log ("Moving Marker");
 					}
 					
 				}
 				return;
 			} 
-			
+
+			//Adding Table
 			if (Input.touchCount == 1) {
 				
-				
+
 				if (t.phase != TouchPhase.Began) {
 					return;
 				}
@@ -541,6 +556,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 				} else {
 					Debug.Log ("Table Creation");
 					// Place a new point at that location, clear selection
+					m_placingTable = true;
 					m_selectedMarker = null;
 					StartCoroutine (_WaitForDepthAndFindPlane (t.position));
 					
@@ -614,6 +630,7 @@ public class ARGUIController : MonoBehaviour, ITangoLifecycle, ITangoDepth
 		camForward.Normalize ();
 		
 		m_instantiatedGame = (GameObject) Instantiate(m_prefabMarker, planeCenter, Quaternion.LookRotation(camForward, Vector3.up));
+		m_placingTable = false;
 		m_selectedMarker = null;
 	}
 }
