@@ -11,31 +11,52 @@ public class BeerPongCup : MonoBehaviour {
 	
 	public GameObject ball ;
 	public delegate void HitCupEvent (int cupID);
+
+	public float hitTime;
 	
 	public event HitCupEvent OnHit;
+
+	void Start () {
 	
-	bool didBallHit
-	{
-		get {
-			Bounds cupBounds = gameObject.GetComponentInChildren<Renderer> ().bounds;
-			Vector3 cupTop = new Vector3 (cupBounds.center.x, cupBounds.max.y, cupBounds.center.z);
-			Vector3 ballPosition = ball.transform.position;
-			float ballRadius = ball.GetComponent<Renderer> ().bounds.extents.x;
-			float cupRadius = cupBounds.extents.x;
+		hitTime = Time.time + 1000000;
+	}
+
+	bool DidHitBall (GameObject givenBall) {
+
+		Bounds cupBounds = gameObject.GetComponentInChildren<Renderer> ().bounds;
+		Vector3 cupTop = new Vector3 (cupBounds.center.x, cupBounds.max.y, cupBounds.center.z);
+		Vector3 ballPosition = givenBall.transform.position;
+		float ballRadius = givenBall.GetComponent<Renderer> ().bounds.extents.x;
+		float cupRadius = cupBounds.extents.x;
+		
+		Vector3 cupTopView = new Vector3 (cupTop.x, 0, cupTop.z); 
+		Vector3 ballTopView = new Vector3 (ballPosition.x, 0, ballPosition.z); 
+		
+		if (cupTop.y > ballPosition.y &&
+		    ((cupTopView - ballTopView).magnitude < cupRadius - ballRadius)) {
 			
-			Vector3 cupTopView = new Vector3 (cupTop.x, 0, cupTop.z); 
-			Vector3 ballTopView = new Vector3 (ballPosition.x, 0, ballPosition.z); 
-			
-			if (cupTop.y > ballPosition.y &&
-			    ((cupTopView - ballTopView).magnitude < cupRadius - ballRadius)) {
-				
-				return true;
-			}
-			
-			return false;
-			
+			return true;
 		}
 		
+		return false;
+	}
+	
+	bool didAnyBallHit
+	{
+		get {
+
+			Ball[] balls = GameObject.FindObjectsOfType<Ball> ();
+			foreach (Ball ball in balls) {
+				
+				if (DidHitBall (ball.gameObject)) {
+				
+					hitTime = Time.time;
+					return true;
+				}
+			}
+
+			return false;
+		}
 	}
 
 	public Vector3 top {
@@ -49,7 +70,7 @@ public class BeerPongCup : MonoBehaviour {
 	
 	void Update()
 	{
-		if (didBallHit && OnHit!=null) {
+		if (didAnyBallHit && OnHit!=null) {
 			
 			OnHit (cupNumber);
 		}

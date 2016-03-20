@@ -48,8 +48,10 @@ public class Obstacle : MonoBehaviour {
 	{
 		UpdateVisibility ();
 		
+		float lastStartTime = Mathf.Max (GetComponentInParent<BeerPong> ().activationTime,
+		                                 FindObjectOfType<GameStateBehaviour> ().gameStartTime);
 		if (GetComponentInParent<BeerPong> ().isActive &&
-		    Time.time - GetComponentInParent<BeerPong> ().activationTime > 60.0f + randomActivaitionOffset) {
+		    Time.time - lastStartTime > 60.0f + randomActivaitionOffset) {
 			
 			if (visiblityToggleTime < Time.time) {
 				

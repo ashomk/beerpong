@@ -165,7 +165,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoop: {fileID: 184660}
   ringFrequency: 1
+  ringType: 0
   lastHitTime: 0
+  rocketRingColor: {r: .53103447, g: 1, b: 0, a: 1}
+  shotGunRingColor: {r: .639705896, g: .145588234, b: 0, a: 1}
   onHitColor: {r: 1, g: .808000028, b: 0, a: 1}
   onInvisibilityColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1001 &100100000
@@ -181,11 +184,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_IsTrigger
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_Convex
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: onHitColor.g
@@ -198,6 +201,18 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: onHitColor.r
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: rocketRingColor.r
+      value: .53103447
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: shotGunRingColor.g
+      value: .145588234
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: shotGunRingColor.r
+      value: .639705896
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

@@ -12,23 +12,42 @@ public class PowerUpRing : MonoBehaviour {
 	public const float HIT_WAIT_TIME = 1.0f;
 	public const float DISABLE_WAIT_TIME = 0.5f;
 
+	public enum Type
+	{
+		ROCKET,
+		SHOTGUN
+	}
+
+	public Type ringType = Type.ROCKET;
+
 	private float visiblityToggleTime = 0;
 	private float visibilityChangeTime = 0;
 
 	public float lastHitTime = 0;
 
 	private bool visibility = false;
-	private Color baseColor;
+	public Color rocketRingColor = Color.green;
+	public Color shotGunRingColor = Color.red;
 
+	private Color baseColor {
+		
+		get {
+			
+			return (ringType == Type.ROCKET) ? rocketRingColor : shotGunRingColor;
+		}
+	}
+	
 	public Color onHitColor = Color.yellow;
 	public Color onInvisibilityColor = new Color (0, 0, 0, 0);
+
+	private float offSetTime = 20;
 
 	void Start () {
 
 		transform.localPosition = (GameStateBehaviour.tableLocalScale.y + hoop.GetComponent<Renderer> ().bounds.size.y) * Vector3.up;
 		transform.localRotation = transform.rotation;
-		baseColor = hoop.GetComponent<Renderer> ().material.color;
 		hoop.GetComponent<Renderer> ().material.color = onInvisibilityColor;
+		offSetTime += Random.Range (0, 20f);
 	}
 
 	private void UpdateVisibility() {
@@ -51,8 +70,10 @@ public class PowerUpRing : MonoBehaviour {
 	{
 		UpdateVisibility ();
 
+		float lastStartTime = Mathf.Max (GetComponentInParent<BeerPong> ().activationTime,
+		                                 FindObjectOfType<GameStateBehaviour> ().gameStartTime);
 		if (GetComponentInParent<BeerPong> ().isActive &&
-		    Time.time - GetComponentInParent<BeerPong> ().activationTime > 30.0f) {
+		    Time.time - lastStartTime > offSetTime) {
 
 			if (visiblityToggleTime < Time.time) {
 
@@ -82,9 +103,10 @@ public class PowerUpRing : MonoBehaviour {
 					deltaSlerpFactor = 0.1f;
 				}
 
-				targetLocalPosition = new Vector3 (0.7f * Mathf.Sin (Time.time * ringFrequency), 
+				targetLocalPosition = new Vector3 (0.7f * Mathf.Sin (Time.time * ringFrequency + offSetTime), 
 				                                   GameStateBehaviour.tableLocalScale.y * 2f, 
 				                                   0);
+
 			} else {
 			
 				targetColor = onInvisibilityColor;
@@ -111,10 +133,4 @@ public class PowerUpRing : MonoBehaviour {
 
 		lastHitTime = Time.time;
 	}
-
-
-	void OnTriggerExit(Collider other) {
-
-	}
-
 }

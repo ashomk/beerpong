@@ -3,8 +3,6 @@ using System.Collections.Generic;
 
 public class BallMotionController : Singleton <BallMotionController> {
 
-	public GameObject Ball;
-
 	public float time_interval = 0.02f;
 	
 	//LineRenderer

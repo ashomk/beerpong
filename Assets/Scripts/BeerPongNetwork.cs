@@ -21,8 +21,6 @@ public class BeerPongNetwork : Singleton<BeerPongNetwork> {
 		}
 	}
 
-	public BeerPong.PlayerID currentPlayerID = BeerPong.PlayerID.First;
-
 	public delegate void PairingCompleteEvent();
 
 	//This event is called when pairing is completed
@@ -38,6 +36,17 @@ public class BeerPongNetwork : Singleton<BeerPongNetwork> {
 		//TODO: Forward it through the network
 	}
 
+	public delegate void TurnChangeEvent ();
+	
+	//This event is called if this player's turn is complete
+	public event TurnChangeEvent OnTurnChange;
+	
+	//Notify opponent on turn change
+	public void NotifyTurnChange () {
+	
+		//TODO: Forward it through the network
+	}
+	
 	public delegate void MissedCup ();
 
 	//This event is called if the opponent said he missed the cup

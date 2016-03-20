@@ -284,26 +284,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!1 &182332
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 4
-  m_Component:
-  - 4: {fileID: 411798}
-  - 33: {fileID: 3388654}
-  - 135: {fileID: 13514000}
-  - 23: {fileID: 2386178}
-  - 54: {fileID: 5461878}
-  - 114: {fileID: 11432702}
-  m_Layer: 0
-  m_Name: Ball
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
 --- !u!1 &185754
 GameObject:
   m_ObjectHideFlags: 1
@@ -349,6 +329,26 @@ GameObject:
   - 114: {fileID: 11448892}
   m_Layer: 0
   m_Name: DifficultyMeter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &192774
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 449450}
+  - 33: {fileID: 3357464}
+  - 135: {fileID: 13549808}
+  - 23: {fileID: 2379204}
+  - 54: {fileID: 5479500}
+  - 114: {fileID: 11481100}
+  m_Layer: 0
+  m_Name: Ball
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -400,18 +400,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 447466}
   m_RootOrder: 4
---- !u!4 &411798
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 182332}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .0399999991, y: .0400000028, z: .0400000028}
-  m_Children: []
-  m_Father: {fileID: 447466}
-  m_RootOrder: 0
 --- !u!4 &424746
 Transform:
   m_ObjectHideFlags: 1
@@ -484,7 +472,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 411798}
+  - {fileID: 449450}
   - {fileID: 495466}
   - {fileID: 484018}
   - {fileID: 432296}
@@ -495,6 +483,18 @@ Transform:
   - {fileID: 432850}
   m_Father: {fileID: 424746}
   m_RootOrder: 1
+--- !u!4 &449450
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 192774}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: .0399999991, y: .0400000028, z: .0400000028}
+  m_Children: []
+  m_Father: {fileID: 447466}
+  m_RootOrder: 0
 --- !u!4 &452722
 Transform:
   m_ObjectHideFlags: 1
@@ -583,12 +583,12 @@ MeshRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingOrder: 0
---- !u!23 &2386178
+--- !u!23 &2379204
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 182332}
+  m_GameObject: {fileID: 192774}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -623,19 +623,19 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 102770}
   m_Mesh: {fileID: 4300000, guid: ba492f1837b624048a061bab50022804, type: 3}
---- !u!33 &3388654
+--- !u!33 &3357464
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 182332}
+  m_GameObject: {fileID: 192774}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!54 &5461878
+--- !u!54 &5479500
 Rigidbody:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 182332}
+  m_GameObject: {fileID: 192774}
   serializedVersion: 2
   m_Mass: .0907185003
   m_Drag: 0
@@ -782,9 +782,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ca47922dbaaac1449cc91a5645f5420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BeerPongTable: {fileID: 142944}
+  BoardwalkPong: {fileID: 142944}
   TableModel: {fileID: 102770}
-  Ball: {fileID: 182332}
+  Ball: {fileID: 192774}
   InvalidPlayerPositionText: {fileID: 175192}
   YouWonText: {fileID: 181430}
   YouLoseText: {fileID: 130434}
@@ -792,10 +792,10 @@ MonoBehaviour:
   cupPrefab: {fileID: 105976, guid: 097dc7f0e86eea64ebf972ad7c697c72, type: 2}
   ringPrefab: {fileID: 178832, guid: c2fc071e6dd00d2419cc279f97c4125e, type: 2}
   obstaclePrefab: {fileID: 155068, guid: 48db5a508377af846841da2fc37368a6, type: 2}
+  ringBallPrefab: {fileID: 120024, guid: 32b4bf3d412b7d24d83ddb0c9f63de98, type: 2}
   maxVelocity: 7
   ballReleaseTimeout: 4
-  hitRing: {fileID: 0}
-  relativeBallStartLocalPosition: {x: .129999995, y: -0, z: .270000011}
+  relativeBallStartLocalPosition: {x: .129999995, y: 0, z: .270000011}
 --- !u!114 &11416706
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -823,7 +823,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   thisPlayerID: 1
-  currentPlayerID: 1
 --- !u!114 &11423030
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -908,17 +907,6 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
---- !u!114 &11432702
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 182332}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd42e2ff6ecac0040aae155ce02176c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &11440372
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1124,6 +1112,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f63d5793fbb125b4b8c30af0188a8f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11481100
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 192774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd42e2ff6ecac0040aae155ce02176c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11481292
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1135,7 +1134,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6bc731aa3b27434995c802cd85e7e90, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Ball: {fileID: 182332}
   time_interval: .0199999996
 --- !u!114 &11490670
 MonoBehaviour:
@@ -1269,12 +1267,12 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
---- !u!135 &13514000
+--- !u!135 &13549808
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 182332}
+  m_GameObject: {fileID: 192774}
   m_Material: {fileID: 13400000, guid: cb6177d876136ae48a908fcc2261ec49, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
