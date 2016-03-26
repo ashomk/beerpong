@@ -18,13 +18,16 @@ public class Obstacle : MonoBehaviour {
 	
 	public Color onHitColor = Color.yellow;
 	public Color onInvisibilityColor = new Color (0, 0, 0, 0);
+
+	public Renderer obstacleRenderer;
+	public Collider obstacleCollider;
 	
 	void Start () {
 		
-		transform.localPosition = (GameStateBehaviour.tableLocalScale.y + GetComponent<Renderer> ().bounds.size.y) * Vector3.up;
+		transform.localPosition = (GameStateBehaviour.tableLocalScale.y + obstacleRenderer.bounds.size.y) * Vector3.up;
 		transform.localRotation = transform.rotation;
-		baseColor = GetComponent<Renderer> ().material.color;
-		GetComponent<Renderer> ().material.color = onInvisibilityColor;
+		baseColor = obstacleRenderer.material.color;
+		obstacleRenderer.material.color = onInvisibilityColor;
 		randomActivaitionOffset = Random.Range (0, 30);
 	}
 	
@@ -40,8 +43,8 @@ public class Obstacle : MonoBehaviour {
 			childTrans.gameObject.SetActive (visibility);
 		}
 		
-		GetComponent <Renderer> ().enabled = visibility;
-		GetComponent <Collider> ().enabled = visibility;
+		obstacleRenderer.enabled = visibility;
+		obstacleCollider.enabled = visibility;
 	}
 	
 	void Update()
@@ -60,8 +63,8 @@ public class Obstacle : MonoBehaviour {
 			}
 			
 			//Wait for HIT_WAIT_TIME, if necessary
-			Vector3 targetLocalPosition = (GameStateBehaviour.tableLocalScale.y + GetComponent<Renderer> ().bounds.size.y) * Vector3.up;
-			Color targetColor = GetComponent<Renderer> ().material.color;
+			Vector3 targetLocalPosition = (GameStateBehaviour.tableLocalScale.y + obstacleRenderer.bounds.size.y) * Vector3.up;
+			Color targetColor = obstacleRenderer.material.color;
 			float colorSlerpParam = Time.deltaTime;
 			float deltaSlerpFactor = 1f;
 			if (visibility) {
@@ -92,10 +95,10 @@ public class Obstacle : MonoBehaviour {
 			transform.localPosition =   targetLocalPosition * clampedDeltaTime + 
 				transform.localPosition * (1f - clampedDeltaTime);
 
-			GetComponent<Renderer> ().material.color = targetColor * colorSlerpParam + 
-				GetComponent<Renderer> ().material.color * (1f - colorSlerpParam);
+			obstacleRenderer.material.color = targetColor * colorSlerpParam + 
+				obstacleRenderer.material.color * (1f - colorSlerpParam);
 
-			transform.Rotate (new Vector3(1,2,3).normalized * 50 * Time.deltaTime, Space.Self);
+			//transform.Rotate (new Vector3(1,2,3).normalized * 50 * Time.deltaTime, Space.Self);
 			
 			
 		} else {
