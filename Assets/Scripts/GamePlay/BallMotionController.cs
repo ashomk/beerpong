@@ -54,7 +54,7 @@ public class BallMotionController : Singleton <BallMotionController> {
 		lineRenderer.material = new Material(Shader.Find("Particles/Additive"));
 		// set color, width
 		lineRenderer.SetColors(new Color(1f, 0.5f, 0), Color.black);
-		lineRenderer.SetWidth(0.007f, 0.007f);
+		lineRenderer.SetWidth(0.007f, 0.02f);
 	}
 	
 	void DrawTrajectory (Vector3 initialVelocity, Vector3 offsetPosition, float targetY) {

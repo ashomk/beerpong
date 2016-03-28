@@ -500,7 +500,8 @@ public class GameStateBehaviour : StateBehaviour {
 		get {
 			
 			Vector3 ballLocalPosition = BoardwalkPong.transform.InverseTransformPoint (Ball.transform.position);
-			return ballLocalPosition.y < tableLocalScale.y - Ball.GetComponent <Renderer> ().bounds.size.y;
+
+			return ballLocalPosition.y < tableLocalScale.y / 2 - Ball.GetComponent <Renderer> ().bounds.size.y;
 		}
 	}
 	
