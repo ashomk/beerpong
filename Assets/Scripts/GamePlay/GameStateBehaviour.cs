@@ -7,6 +7,7 @@ public class GameStateBehaviour : StateBehaviour {
 	public GameObject BoardwalkPong;
 	public GameObject TableModel;
 	public GameObject Ball;
+
 	public GameObject InvalidPlayerPositionText;
 	public GameObject YouWonText;
 	public GameObject YouLoseText;
@@ -26,8 +27,9 @@ public class GameStateBehaviour : StateBehaviour {
 	public float hitCupLifetime = 2f;
 
 	private PowerUpRing hitRing;
+
 	
-	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.27f);
+	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.35f);
 	public static Vector3 tableLocalScale = new Vector3 (0.69f, 0.6125f, 1.955f);
 
 	public float gameStartTime {
@@ -48,6 +50,8 @@ public class GameStateBehaviour : StateBehaviour {
 	private float ballThrowStartTime;
 
 	private bool isMyTurn;
+
+	private bool isSliderSet = false;
 	
 	/**
 	 * TODO: Dispatch events to opponent via network if current state != CurrentPlayerInactive
@@ -295,6 +299,9 @@ public class GameStateBehaviour : StateBehaviour {
 		SetUpRings ();
 		SetUpObstacles ();
 
+
+
+
 		InvalidPlayerPositionText.SetActive (false);
 		YouWonText.SetActive (false);
 		YouLoseText.SetActive (false);
@@ -358,10 +365,17 @@ public class GameStateBehaviour : StateBehaviour {
 		hitCups.Add (dictCup [cupNumber].GetComponent <BeerPongCup> ());
 	}
 
-	private void RenderBallPosition () {
+	public void RenderBallPosition () {
 
 		//TODO: We might want to slerp on absolute position change
 		Ball.transform.position = gameCameraTransform.TransformPoint (relativeBallStartLocalPosition);
+
+		if (!isSliderSet) {
+			BeerPongInput.Instance.setSliderPosition ();
+			isSliderSet = true;
+			Debug.Log("isSliderSet");
+		}
+
 	}
 
 	private void RenderBallBeforeThrow () {

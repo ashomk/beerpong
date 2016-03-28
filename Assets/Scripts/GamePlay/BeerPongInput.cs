@@ -7,6 +7,10 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 
 	public Slider slider;
 
+	public void Awake(){
+		
+	}
+
 	public void PointerUp () {
 
 		if (isTouchDown) {
@@ -18,6 +22,8 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 
 			currentPower = slider.value;
 			isTouchDown = false;
+
+			SetVisible (true);
 		}
 	}
 
@@ -32,6 +38,7 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 
 			currentPower = slider.value;
 			isTouchDown = true;
+			SetVisible (false);
 		}
 	}
 
@@ -69,6 +76,8 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 	public void SetVisible (bool visibility) {
 
 		slider.gameObject.SetActive (visibility);
+
+
 	}
 
 	//This method must clear the slider to a state as though the interaction hasn't been started
@@ -76,6 +85,37 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 
 		slider.value = 0;
 	}
+
+	public void setSliderPosition(){
+
+		slider.transform.position = Camera.main.WorldToScreenPoint(GameObject.Find("Ball").transform.position);
+		Vector3 yPos = slider.transform.position;
+		yPos.y = slider.transform.position.y - 180;
+		slider.transform.position = yPos;
+
+		Vector3 Rot = slider.transform.localEulerAngles;
+		Rot.x = 180;
+		Rot.y = 180;
+		slider.transform.localEulerAngles = Rot;
+
+		RectTransform rt = slider.GetComponent (typeof (RectTransform)) as RectTransform;
+		rt.sizeDelta = new Vector2 (500, 650);
+
+		Image fillImage = slider.transform.FindChild ("Fill Area/Fill").GetComponent<Image> ();
+		fillImage.material.color = new Color (0, 0, 0, 0.4f);
+		slider.image = fillImage;
+
+		Color fillColor = slider.image.color;
+		fillColor.a = 0f;
+		slider.image.color = fillColor;
+
+		SetVisible (false);
+
+
+
+
+	}
+		
 }
 
 
