@@ -29,6 +29,19 @@ public class Obstacle : MonoBehaviour {
 		baseColor = obstacleRenderer.material.color;
 		obstacleRenderer.material.color = onInvisibilityColor;
 		randomActivaitionOffset = Random.Range (0, 30);
+
+		StartCoroutine(delayThenAnimateToss());
+	}
+
+	private IEnumerator delayThenAnimateToss()
+	{
+		yield return new WaitForSeconds(10f);
+
+		// get a reference to the animator on this gameObject
+		var animator = gameObject.GetComponent<Animator>();
+
+		animator.SetTrigger("Trigger1");
+		Debug.Log ("TRIGGERED");
 	}
 	
 	private void UpdateVisibility() {

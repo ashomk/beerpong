@@ -83,7 +83,89 @@ ModelImporter:
     animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Take 001
+      takeName: Take 001
+      firstFrame: 1
+      lastFrame: 24
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: hubert
+        weight: 1
+      - path: root_ghost
+        weight: 1
+      - path: root_ghost/body_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/back_01_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/back_01_ghost/back_02_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/back_01_ghost/back_02_ghost/back_03_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/front_01_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/front_01_ghost/front_02_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/front_01_ghost/front_02_ghost/front_03_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/head_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/head_ghost/eyes_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/head_ghost/face_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/left_01_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/left_01_ghost/left_02_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/left_01_ghost/left_02_ghost/left_03_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/left_shoulder_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/left_shoulder_ghost/left_hand_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/right_01_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/right_01_ghost/right_02_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/right_01_ghost/right_02_ghost/right_03_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/right_shoulder_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/right_shoulder_ghost/chain_01_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/right_shoulder_ghost/chain_01_ghost/chain_02_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/right_shoulder_ghost/chain_01_ghost/chain_02_ghost/chain_03_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/right_shoulder_ghost/right_hand_ghost
+        weight: 1
+      - path: root_ghost/body_ghost/right_shoulder_ghost/spikeball1
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
