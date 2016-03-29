@@ -23,7 +23,7 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 			currentPower = slider.value;
 			isTouchDown = false;
 
-			SetVisible (true);
+//			SetVisible (true);
 		}
 	}
 
@@ -38,7 +38,7 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 
 			currentPower = slider.value;
 			isTouchDown = true;
-			SetVisible (false);
+//			SetVisible (false);
 		}
 	}
 
@@ -90,26 +90,44 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 
 		slider.transform.position = Camera.main.WorldToScreenPoint(GameObject.Find("Ball").transform.position);
 		Vector3 yPos = slider.transform.position;
-		yPos.y = slider.transform.position.y - 180;
+		yPos.y = slider.transform.position.y - 220;
 		slider.transform.position = yPos;
 
-		Vector3 Rot = slider.transform.localEulerAngles;
-		Rot.x = 180;
-		Rot.y = 180;
-		slider.transform.localEulerAngles = Rot;
+		//change slider direction
+		slider.SetDirection (Slider.Direction.TopToBottom, false);
 
+		//set width and height
 		RectTransform rt = slider.GetComponent (typeof (RectTransform)) as RectTransform;
-		rt.sizeDelta = new Vector2 (500, 650);
+		rt.sizeDelta = new Vector2 (540, 750);
 
-		Image fillImage = slider.transform.FindChild ("Fill Area/Fill").GetComponent<Image> ();
-		fillImage.material.color = new Color (0, 0, 0, 0.4f);
-		slider.image = fillImage;
-
+//		Image fillImage = slider.transform.FindChild ("Fill Area/Fill").GetComponent<Image> ();
+//		fillImage.material.color = new Color (0, 0, 0, 0.4f);
+//		slider.image = fillImage;
+//
+//		Image fillImage1 = slider.transform.FindChild ("Handle Slide Area/Handle").GetComponent<Image> ();
+//
 		Color fillColor = slider.image.color;
 		fillColor.a = 0f;
 		slider.image.color = fillColor;
 
-		SetVisible (false);
+
+		Image fill = slider.transform.FindChild ("Fill Area/Fill").GetComponent<Image> ();
+		if (fill != null)
+		{
+			fill.color = new Color (255, 164, 0, 0.1f);
+
+		}
+
+		Image fill1 = slider.transform.FindChild ("Background").GetComponent<Image> ();
+		if (fill1 != null)
+		{
+			fill1.color = new Color (255, 164, 0, 0.1f);
+
+		}
+
+
+
+//		SetVisible (false);
 
 
 
