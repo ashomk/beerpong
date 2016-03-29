@@ -40,7 +40,8 @@ public class Obstacle : MonoBehaviour {
 		// get a reference to the animator on this gameObject
 		var animator = gameObject.GetComponent<Animator>();
 
-		animator.SetTrigger("Trigger1");
+		//animator.SetTrigger("tossTrigger");
+		animator.SetBool("canToss", true);
 		Debug.Log ("TRIGGERED");
 	}
 	
