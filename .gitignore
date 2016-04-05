@@ -10,3 +10,4 @@ obj
 !*.dll
 !*.obj
 *.DS_Store
+*.apk

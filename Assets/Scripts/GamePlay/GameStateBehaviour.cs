@@ -6,17 +6,23 @@ public class GameStateBehaviour : StateBehaviour {
 	
 	public GameObject BoardwalkPong;
 	public GameObject TableModel;
-	public GameObject Ball;
+
+	private GameObject Ball;
 
 	public GameObject InvalidPlayerPositionText;
 	public GameObject YouWonText;
 	public GameObject YouLoseText;
+	public GameObject PairingInfoText;
 	public GameObject ReplayButton;
 
+	private GameObject rocketRing;
+	private GameObject shotGunRing;
+
+	private List<GameObject> obstacles;
+
 	public GameObject cupPrefab;
-	public GameObject ringPrefab;
-	public GameObject obstaclePrefab;
-	public GameObject ringBallPrefab;
+
+	private List<GameObject> ringBalls;
 
 	private int playerCupCount = 10;
 	private Dictionary<int,GameObject> dictCup;
@@ -24,10 +30,10 @@ public class GameStateBehaviour : StateBehaviour {
 
 	public float maxVelocity = 7f;
 	public float ballReleaseTimeout = 4f;
-	public float hitCupLifetime = 2f;
+	public float hitCupLifetime = 3f;
 
 	private PowerUpRing hitRing;
-
+	private BeerPong beerPongInstance;
 	
 	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.35f);
 	public static Vector3 tableLocalScale = new Vector3 (0.69f, 0.6125f, 1.955f);
@@ -39,7 +45,6 @@ public class GameStateBehaviour : StateBehaviour {
 	}
 
 	private List<BeerPongCup> hitCups = new List<BeerPongCup> ();
-	private BeerPong.PlayerID winnerID = BeerPong.PlayerID.First;
 	private Vector3 rocketRingHitTarget;
 	
 	private Transform gameCameraTransform;
@@ -48,8 +53,13 @@ public class GameStateBehaviour : StateBehaviour {
 	private bool didSetDefaultRotation = false;
 	private Bounds defaultCupBounds = new Bounds();
 	private float ballThrowStartTime;
+	private bool turnChangeRequested;
 
-	private bool isMyTurn;
+	public bool isMyTurn {
+
+		get;
+		private set;
+	}
 
 	private bool isSliderSet = false;
 	
@@ -58,7 +68,8 @@ public class GameStateBehaviour : StateBehaviour {
 	 * Else, listen to opponent events when (currentState == CurrentPlayerInactive)
 	 */
 	public enum States {
-		
+
+		Pairing, //The state when the player is waiting to be paired. 
 		Init, //To initialize the table with cups, and transit to WaitToThrow if player 1. Else, transit to CurrentPlayerInactive if player 2
 		WaitToThrow, //Wait till slider down. If (isTouchDown) ChangeState(RenderTrail)
 		InvalidPlayerPosition, //Validate if player moved out
@@ -67,9 +78,10 @@ public class GameStateBehaviour : StateBehaviour {
 		BallReleased, //On update, follow trail with specified velocity
 		HitOpponentCup, //(Animation for drinking), Difficulty Meter update & dispatch, Transit to GameOver / CurrentPlayerInactive
 		HitRing, //Expose enter and exit till game logic is implemented
-		MissedOpponentCup, //Broadcast to the opponent that this player's turn is over. Transit to CurrentPlayerInactive
+		MissedOpponentCup, //Transit to CurrentPlayerInactive
 		GameOver, //Transit to view 4 by dispatching a OnGameOver (bool didWin) event
-		CurrentPlayerInactive //Listen and apply events over the network : render trail, render ball motion, render ring, hit cup
+		CurrentPlayerInactive //Broadcast to the opponent that this player's turn is over. 
+		//Listen and apply events over the network : render trail, render ball motion, render ring, hit cup
 		//From here transit to WaitToThrow or GameOver depending the number of cups on current player's side
 	}
 	
@@ -77,25 +89,79 @@ public class GameStateBehaviour : StateBehaviour {
 		
 		Initialize <States> ();
 
-		//TODO: Once the networking component is completed, uncomment the following 
-		//event registration and delete the force invocation of OnPairingComplete();
-		//BeerPongNetwork.Instance.OnPairingComplete += OnPairingComplete;
-
-		//OnPairingComplete ();
-
 		InvalidPlayerPositionText.SetActive (false);
 		YouWonText.SetActive (false);
 		YouLoseText.SetActive (false);
+		PairingInfoText.SetActive (false);
 		ReplayButton.SetActive (false);
 
 		gameCameraTransform = GameObject.Find ("Tango AR Camera").transform;
 
+		beerPongInstance = GetComponentInParent<BeerPong> ();
+		beerPongInstance.ActivateGamePlay += HandleActivateGamePlay;
+
+		ringBalls = new List<GameObject> ();
+		obstacles = new List<GameObject> ();
+	}
+
+
+	 void HandleActivateGamePlay(){
+
+		ChangeState (States.Pairing);
+	}
+
+	void Pairing_Enter () {
+
+		PairingInfoText.SetActive (true);
+
+		DestroyPreviousRoundObjects ();
+
+		BeerPongNetwork.Instance.OnOpponentQuit += HandleOnOpponentQuit;
+		BeerPongNetwork.Instance.OnPairingComplete += OnPairingComplete;
+	}
+
+	private void Pairing_Update () {
+
+		BeerPongNetwork bpn = BeerPongNetwork.Instance;
+		if (!bpn.paired &&
+			!bpn.pairing &&
+			!bpn.unpairing) {
+
+			bpn.Pair ();
+		}
+	}
+
+	void HandleOnOpponentQuit ()
+	{
+		if (States.GameOver != (States)GetState ()) {
+		
+			ChangeState (States.GameOver);
+		}
+	}
+
+	void Pairing_Exit () {
+
+		PairingInfoText.SetActive (false);
+		BeerPongNetwork.Instance.OnPairingComplete -= OnPairingComplete;
 	}
 
 	//This event handler will be registered to BeerPongNetwork component to listen to the pairing event
 	public void OnPairingComplete () {
 
-		ChangeState (States.Init);
+		//Transit only from Pairing state. Else log error
+		if (States.Pairing == (States)GetState ()) {
+		
+			ChangeState (States.Init);
+		
+		} else {
+		
+			Debug.LogError ("Invalid state to recieve OnPairingComplete");
+		}
+	}
+
+	private void SetUpBall () {
+
+		Ball = PhotonNetwork.Instantiate ("Ball", Vector3.down * 50, Quaternion.identity, 0);
 	}
 
 	private void SetUpCups () {
@@ -151,8 +217,6 @@ public class GameStateBehaviour : StateBehaviour {
 			//	Debug.Log ("position is  " + magnitude);
 		}
 
-
-
 		for (int i = playerCupCount,l=6; i < 2*playerCupCount; i++,l+=4) {
 
 			if (i == 10)
@@ -186,40 +250,32 @@ public class GameStateBehaviour : StateBehaviour {
 			cup.GetComponent<BeerPongCup> ().OnHit += OnHitOpponentCup;
 			dictCup.Add (i,cup);
 
-
 			//	Debug.Log ("position is  " + magnitude);
 		}
-
-
 	}
 
 	private void SetUpRings () {
 		
-		GameObject rocketRing = GameObject.Instantiate<GameObject>(ringPrefab);
-		playRoundObject.Add (rocketRing);
-		rocketRing.transform.parent = BoardwalkPong.transform;
-		
+		rocketRing = PhotonNetwork.Instantiate ("rocketRing", Vector3.down * 50, Quaternion.identity, 0);
 		rocketRing.transform.localPosition = new Vector3(0,tableLocalScale.y*3/2,0);
+		PowerUpRing powerUpRing = rocketRing.GetComponent<PowerUpRing> ();
+		powerUpRing.isMyPhotonView = true;
+		powerUpRing.OnHitRing += OnHitRing;
 
-		rocketRing.GetComponent<PowerUpRing> ().ringType = PowerUpRing.Type.ROCKET;
-		rocketRing.GetComponent<PowerUpRing> ().OnHitRing += OnHitRing;
-
-		GameObject ring = GameObject.Instantiate<GameObject>(ringPrefab);
-		playRoundObject.Add (ring);
-		ring.transform.parent = BoardwalkPong.transform;
-		
-		ring.transform.localPosition = new Vector3(0,tableLocalScale.y*3/2,0);
-		
-		ring.GetComponent<PowerUpRing> ().ringType = PowerUpRing.Type.SHOTGUN;
-		ring.GetComponent<PowerUpRing> ().OnHitRing += OnHitRing;
+		shotGunRing = PhotonNetwork.Instantiate ("shotgunRing", Vector3.down * 50, Quaternion.identity, 0);
+		shotGunRing.transform.localPosition = new Vector3(0,tableLocalScale.y*3/2,0);
+		powerUpRing = shotGunRing.GetComponent<PowerUpRing> ();
+		powerUpRing.isMyPhotonView = true;
+		powerUpRing.OnHitRing += OnHitRing;
 	}
 	
 	private void SetUpObstacles () {
 
 		for (int i = 0; i < 2; i ++) {
 
-			GameObject obstacle = GameObject.Instantiate<GameObject> (obstaclePrefab);
-			playRoundObject.Add (obstacle);
+			GameObject obstacle = PhotonNetwork.Instantiate ("Obstacle", Vector3.down * 50, Quaternion.identity, 0);
+			obstacle.GetComponent<Obstacle> ().isMyPhotonView = true;
+			obstacles.Add (obstacle);
 			obstacle.transform.parent = BoardwalkPong.transform;
 			obstacle.transform.localPosition = new Vector3 (0, tableLocalScale.y * 3 / 2, 0);
 		}
@@ -265,18 +321,23 @@ public class GameStateBehaviour : StateBehaviour {
 	
 	private void SetUpCamera (BeerPong.PlayerID playerID) {
 
+		//Set the default roation, to reset roation on replay
+		if (!didSetDefaultRotation) {
+			
+			beerPongTableDefaultRotation = BoardwalkPong.transform.rotation;
+			didSetDefaultRotation = true;
+		}
+
 		if (playerID == BeerPong.PlayerID.Second) {
-
-			//Set the default roation, to reset roation on replay
-			if (!didSetDefaultRotation) {
-
-				beerPongTableDefaultRotation = BoardwalkPong.transform.rotation;
-				didSetDefaultRotation = true;
-			}
 
 			//Change rotation as needed
 			BoardwalkPong.transform.rotation = beerPongTableDefaultRotation;
 			BoardwalkPong.transform.localRotation = Quaternion.Euler(BoardwalkPong.transform.localRotation.eulerAngles + Vector3.up * 180f);
+		
+		} else {
+			
+			//Change rotation as needed
+			BoardwalkPong.transform.rotation = beerPongTableDefaultRotation;
 		}
 	}
 
@@ -290,21 +351,18 @@ public class GameStateBehaviour : StateBehaviour {
 	
 	private void Init_Enter () {
 
-		DestroyPreviousRoundObjects ();
-
 		gameStartTime = Time.time;
 
+		SetUpBall ();
 		SetUpCups ();
 		SetUpCamera (BeerPongNetwork.Instance.thisPlayerID);
 		SetUpRings ();
 		SetUpObstacles ();
 
-
-
-
 		InvalidPlayerPositionText.SetActive (false);
 		YouWonText.SetActive (false);
 		YouLoseText.SetActive (false);
+		PairingInfoText.SetActive (false);
 		ReplayButton.SetActive (false);
 
 		DifficultyMeter.Instance.Clear ();
@@ -314,7 +372,6 @@ public class GameStateBehaviour : StateBehaviour {
 
 		if (BeerPongNetwork.Instance.thisPlayerID == BeerPong.PlayerID.First) { 
 
-			isMyTurn = true;
 			ChangeState (States.WaitToThrow);
 
 		} else {
@@ -322,7 +379,6 @@ public class GameStateBehaviour : StateBehaviour {
 			ChangeState (States.CurrentPlayerInactive);
 		}
 
-		BeerPongNetwork.Instance.OnOpponentMissedCup += HandleOnOpponentMissedCup;
 		BeerPongNetwork.Instance.OnHitMyCup += HandleOnHitMyCup;
 		BeerPongNetwork.Instance.OnTurnChange += HandleOnTurnChange;
 	}
@@ -331,9 +387,17 @@ public class GameStateBehaviour : StateBehaviour {
 	{
 		if ((States)GetState () == States.CurrentPlayerInactive) {
 		
-			isMyTurn = true;
+			turnChangeRequested = true;
+
+			if (hitCups.Count > 0) {
+
+				//Animate and return via CurrentPlayerInactive_Update
+				return;
+			}
+
+			//No cups were hit. So, switch turn
+			ChangeState (States.WaitToThrow);
 		}
-		//TODO: Complete this!!!
 	}
 
 	private void HandleOnThrowEnd () {
@@ -348,30 +412,24 @@ public class GameStateBehaviour : StateBehaviour {
 		}
 	}
 
-	private void HandleOnOpponentMissedCup ()
-	{
-		if ((States)GetState () == States.CurrentPlayerInactive) {
-
-			ChangeState (States.WaitToThrow);
-
-		} else {
-
-			Debug.LogError ("Unexpected opponent state");
-		}
-	}
-	
 	private void HandleOnHitMyCup (int cupNumber) {
 
-		hitCups.Add (dictCup [cupNumber].GetComponent <BeerPongCup> ());
+		if (!dictCup.ContainsKey (cupNumber)) {
+		
+			return;
+		}
+		BeerPongCup hitCup = dictCup [cupNumber].GetComponent <BeerPongCup> ();
+		hitCup.hitTime = Time.time;
+
+		hitCups.Add (hitCup);
 	}
 
 	public void RenderBallPosition () {
 
-		//TODO: We might want to slerp on absolute position change
 		Ball.transform.position = gameCameraTransform.TransformPoint (relativeBallStartLocalPosition);
 
 		if (!isSliderSet) {
-			BeerPongInput.Instance.setSliderPosition ();
+			BeerPongInput.Instance.setSliderPosition (Ball);
 			isSliderSet = true;
 			Debug.Log("isSliderSet");
 		}
@@ -381,8 +439,6 @@ public class GameStateBehaviour : StateBehaviour {
 	private void RenderBallBeforeThrow () {
 
 		RenderBallPosition ();
-
-		//TODO: Sync the ball across the network
 	}
 
 	private bool isUserAtValidPosition {
@@ -394,7 +450,9 @@ public class GameStateBehaviour : StateBehaviour {
 	}
 	
 	private void WaitToThrow_Enter () {
-		
+
+		isMyTurn = true;
+		Ball.GetComponent<Rigidbody> ().isKinematic = true;
 		BeerPongInput.Instance.SetVisible (true);
 		
 		RenderBallBeforeThrow ();
@@ -437,8 +495,6 @@ public class GameStateBehaviour : StateBehaviour {
 		throwDirection = (gameCameraTransform.position + 
 		                  (gameCameraTransform.forward + gameCameraTransform.up*0.4f).normalized * 5 
 		                  - Ball.transform.position).normalized;
-
-		//TODO: Wobble the throw direction based on Difficulty Meter level
 	}
 
 	private void RenderTrail_Update () {
@@ -512,9 +568,8 @@ public class GameStateBehaviour : StateBehaviour {
 
 		ballThrowStartTime = Time.time;
 
-		/****** TODO: Clear this DUMMY CODE till MotionController is completed ******/
+		Ball.GetComponent<Rigidbody> ().isKinematic = false;
 		Ball.GetComponent<Rigidbody>().velocity = throwDirection.normalized * maxVelocity * BeerPongInput.Instance.currentPower;
-		/****** TODO: Clear this DUMMY CODE till MotionController is completed ******/
 	}
 	
 	private void BallReleased_Update () {
@@ -573,37 +628,44 @@ public class GameStateBehaviour : StateBehaviour {
 
 		bool animatedAll = true;
 
-		foreach (BeerPongCup hitCup in hitCups) {
-
-			if (dictCup.ContainsKey (hitCup.cupNumber)) {
-				AnimateClearingCup (hitCup);
-			}
-
-			Bounds tableBounds = TableModel.GetComponentInChildren<Renderer> ().bounds;
-
-			if (tableBounds.max.y + hitCup.GetComponentInChildren<Renderer> ().bounds.size.y * 1.5f < 
-				hitCup.GetComponentInChildren<Renderer> ().bounds.min.y && !threwCup) {
-
-				Rigidbody cupRigidBody = hitCup.gameObject.GetComponentInChildren<Rigidbody> ();
-				Vector3 xzPosition = Vector3.Scale (cupRigidBody.transform.position - tableBounds.center, new Vector3 (1, 0, 1));
-				cupRigidBody.velocity += Physics.gravity.magnitude * 0.15f * xzPosition.normalized;
-				cupRigidBody.angularVelocity = new Vector3 (Random.value, Random.value, Random.value) * 5f;
-				threwCup = true;
-			}
-
-			if (tableBounds.max.y - tableLocalScale.y + hitCup.GetComponentInChildren<Renderer> ().bounds.size.y * 1.5f <
-				hitCup.GetComponentInChildren<Renderer> ().bounds.min.y) {
-			    
-				if (Time.time - hitCup.hitTime < hitCupLifetime) {
+		try {
 			
-					animatedAll = false;
+			foreach (BeerPongCup hitCup in hitCups) {
+
+				if (dictCup.ContainsKey (hitCup.cupNumber)) {
+					AnimateClearingCup (hitCup);
+				}
+
+				Bounds tableBounds = TableModel.GetComponentInChildren<Renderer> ().bounds;
+
+				if (tableBounds.max.y + hitCup.GetComponentInChildren<Renderer> ().bounds.size.y * 1.5f < 
+					hitCup.GetComponentInChildren<Renderer> ().bounds.min.y && !threwCup) {
+
+					Rigidbody cupRigidBody = hitCup.gameObject.GetComponentInChildren<Rigidbody> ();
+					Vector3 xzPosition = Vector3.Scale (cupRigidBody.transform.position - tableBounds.center, new Vector3 (1, 0, 1));
+					cupRigidBody.velocity += Physics.gravity.magnitude * 0.15f * xzPosition.normalized;
+					cupRigidBody.angularVelocity = new Vector3 (Random.value, Random.value, Random.value) * 5f;
+					threwCup = true;
+				}
+
+				if (tableBounds.max.y - tableLocalScale.y + hitCup.GetComponentInChildren<Renderer> ().bounds.size.y * 1.5f <
+					hitCup.GetComponentInChildren<Renderer> ().bounds.min.y) {
+				    
+					if (Time.time - hitCup.hitTime < hitCupLifetime) {
 				
-				} else {
-				
-					hitCups.Remove (hitCup);
-					Destroy (hitCup.gameObject);
+						animatedAll = false;
+					
+					} else {
+					
+						Destroy (hitCup.gameObject);
+					}
 				}
 			}
+			
+		} catch (System.Exception) {
+
+			Debug.LogWarning ("Conflict in hitCup list");
+			return true;
 		}
 
 		return animatedAll;
@@ -611,20 +673,16 @@ public class GameStateBehaviour : StateBehaviour {
 
 	private void HitOpponentCup_Update () {
 
-		//TODO: Update ball position across network
-		bool didAnimate = DidAnimateClearingCups ();
-
-		if (didAnimate) {
+		if (DidAnimateClearingCups ()) {
 
 			hitCups.Clear ();
 
 			if (DidClearCups (BeerPongNetwork.Instance.opponentPlayerID)) {
 		
-				winnerID = BeerPongNetwork.Instance.thisPlayerID;
 				ChangeState (States.GameOver);
 		
 			} else {
-				BeerPongNetwork.Instance.NotifyTurnChange ();
+
 				ChangeState (States.CurrentPlayerInactive);
 			}
 		}
@@ -658,10 +716,11 @@ public class GameStateBehaviour : StateBehaviour {
 
 	private void OnHitShotGunRing () {
 	
-		Vector3 ballPosition = Ball.transform.position;
 		for (int i = 0; i < 4; i ++) {
 		
-			GameObject ringBall = Instantiate<GameObject> (ringBallPrefab);
+			GameObject ringBall = PhotonNetwork.Instantiate ("Ball", Ball.transform.position, Quaternion.identity, 0);
+			ringBalls.Add (ringBall);
+
 			ringBall.transform.parent = BoardwalkPong.transform;
 			Vector3 velocity = Ball.GetComponent <Rigidbody> ().velocity;
 			Vector3 angleDiff = new Vector3 (Random.Range (-15f, 15f), Random.Range (-15f, 15f), 0);
@@ -675,8 +734,6 @@ public class GameStateBehaviour : StateBehaviour {
 	}
 	
 	private void HitRing_Enter () {
-
-		//TODO: Notify this event over network
 
 		switch (hitRing.ringType) {
 
@@ -745,59 +802,74 @@ public class GameStateBehaviour : StateBehaviour {
 
 	private void MissedOpponentCup_Enter () {
 
-		BeerPongNetwork.Instance.OnIMissedCup ();
-
 		ChangeState (States.CurrentPlayerInactive);
 	}
 
 	private void CurrentPlayerInactive_Enter () {
 
 		isMyTurn = false;
+		turnChangeRequested = false;
+		BeerPongNetwork.Instance.NotifyTurnChange ();
 
 		//Clear all ring balls
-		Ball[] balls = GameObject.FindObjectsOfType<Ball> ();
-		foreach (Ball ball in balls) {
+		foreach (GameObject ball in ringBalls) {
 		
-			if (ball.gameObject != Ball) {
-				Destroy (ball.gameObject);
-			}
+			PhotonNetwork.Destroy (ball);
 		}
 
-		//TODO: IMPORTANT!! Uncomment below line on completion of play testing, and remove the above line!
-		isMyTurn = true;
+		ringBalls.Clear ();	
 	}
 	
 	private void CurrentPlayerInactive_Update() {
-		
-		if (DidAnimateClearingCups ()) {
+
+		if ((hitCups.Count > 0 && DidAnimateClearingCups ()) ||
+		     (hitCups.Count == 0 && turnChangeRequested)){
 
 			hitCups.Clear ();
 
 			if (DidClearCups (BeerPongNetwork.Instance.thisPlayerID)) {
 				
-				winnerID = BeerPongNetwork.Instance.opponentPlayerID;
 				ChangeState (States.GameOver);
 				
-			} else if (isMyTurn) {
+			} else {
 
 				ChangeState (States.WaitToThrow);
 			}
 		}
 	}
 
+	private void DestroyMyPhotonObject () {
+
+		PhotonNetwork.Destroy (Ball);
+		Ball = null;
+
+		PhotonNetwork.Destroy (rocketRing);
+		PhotonNetwork.Destroy (shotGunRing);
+		rocketRing = null;
+		shotGunRing = null;
+
+		foreach (GameObject obstacle in obstacles) {
+			
+			PhotonNetwork.Destroy (obstacle);
+		}
+		obstacles.Clear ();
+	}
+
 	private void GameOver_Enter () {
 
 		BeerPongInput.Instance.OnThrowEnd -= HandleOnThrowEnd;
-		BeerPongNetwork.Instance.OnOpponentMissedCup -= HandleOnOpponentMissedCup;
 		BeerPongNetwork.Instance.OnTurnChange -= HandleOnTurnChange;
+		BeerPongNetwork.Instance.OnOpponentQuit -= HandleOnOpponentQuit;
 
-		if (winnerID == BeerPongNetwork.Instance.thisPlayerID) {
+		DestroyMyPhotonObject ();
+
+		if (DidClearCups(BeerPongNetwork.Instance.thisPlayerID)) {
 		
-			YouWonText.SetActive (true);
+			YouLoseText.SetActive (true);
 		
 		} else {
 		
-			YouLoseText.SetActive (true);
+			YouWonText.SetActive (true);
 		}
 
 		ReplayButton.SetActive (true);
@@ -805,15 +877,35 @@ public class GameStateBehaviour : StateBehaviour {
 		//TODO: Display the button for quit
 	}
 
+	private void GameOver_Update () {
+
+		BeerPongNetwork bpn = BeerPongNetwork.Instance;
+		if (bpn.paired &&
+		    !bpn.pairing &&
+		    !bpn.unpairing) {
+
+			bpn.Unpair ();
+		}
+	}
+
+	private void GameOver_Exit () {
+	
+		YouWonText.SetActive (false);
+		YouLoseText.SetActive (false);
+		PairingInfoText.SetActive (false);
+		ReplayButton.SetActive (false);
+	}
+
 	public void OnClickPlayAgain () {
 	
 		if ((States)GetState () == States.GameOver) {
 		
-			ChangeState (States.Init);
+			ChangeState (States.Pairing);
 		}
 	}
 
 	void OnDestroy () {
-		//BeerPongNetwork.Instance.OnPairingComplete -= OnPairingComplete;
+	
+		beerPongInstance.ActivateGamePlay -= HandleActivateGamePlay;
 	}
 }

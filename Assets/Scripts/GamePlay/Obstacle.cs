@@ -13,7 +13,7 @@ public class Obstacle : MonoBehaviour {
 	public float lastHitTime = 0;
 	private float randomActivaitionOffset;
 	
-	private bool visibility = false;
+	public bool visibility = false;
 	private Color baseColor;
 	
 	public Color onHitColor = Color.yellow;
@@ -22,16 +22,20 @@ public class Obstacle : MonoBehaviour {
 	public Renderer obstacleRenderer;
 	public Collider obstacleCollider;
 	
+	public bool isMyPhotonView = false;
+	private GameStateBehaviour gamePlay;
+	private BeerPong beerPong;
+	
 	void Start () {
-		
-		transform.localPosition = (GameStateBehaviour.tableLocalScale.y + obstacleRenderer.bounds.size.y) * Vector3.up;
-		transform.localRotation = transform.rotation;
+
+		beerPong = FindObjectOfType<BeerPong> ();
+		gamePlay = FindObjectOfType<GameStateBehaviour> ();
 		baseColor = obstacleRenderer.material.color;
 		obstacleRenderer.material.color = onInvisibilityColor;
 		randomActivaitionOffset = Random.Range (0, 30);
 	}
 	
-	private void UpdateVisibility() {
+	public void UpdateVisibility() {
 		
 		if (!visibility && (Time.time - visibilityChangeTime) < DISABLE_WAIT_TIME) {
 			
@@ -46,14 +50,45 @@ public class Obstacle : MonoBehaviour {
 		obstacleRenderer.enabled = visibility;
 		obstacleCollider.enabled = visibility;
 	}
+
+	public Color currentColor {
+	
+		get {
+
+			return obstacleRenderer.material.color;
+		}
+	}
+
+	public void UpdateColor (Color color) {
+
+		obstacleRenderer.material.color = color;
+	}
 	
 	void Update()
 	{
+		if (!isMyPhotonView) {
+			
+			return;
+		}
+
+		transform.LookAt (Camera.main.transform, Vector3.up);
+
+		if (!gamePlay.isMyTurn && isMyPhotonView) {
+			
+			visibility = false;
+			UpdateVisibility ();
+			return;
+			
+		} else if (!isMyPhotonView) {
+			
+			return;
+		}
+
 		UpdateVisibility ();
 		
-		float lastStartTime = Mathf.Max (GetComponentInParent<BeerPong> ().activationTime,
-		                                 FindObjectOfType<GameStateBehaviour> ().gameStartTime);
-		if (GetComponentInParent<BeerPong> ().isActive &&
+		float lastStartTime = Mathf.Max (beerPong.activationTime,
+		                                 gamePlay.gameStartTime);
+		if (beerPong.isActive &&
 		    Time.time - lastStartTime > 60.0f + randomActivaitionOffset) {
 			
 			if (visiblityToggleTime < Time.time) {
@@ -94,15 +129,12 @@ public class Obstacle : MonoBehaviour {
 			}
 			
 			float clampedDeltaTime = Mathf.Clamp01 (Time.deltaTime) * deltaSlerpFactor;
-			transform.localPosition =   targetLocalPosition * clampedDeltaTime + 
-				transform.localPosition * (1f - clampedDeltaTime);
+			transform.localPosition = targetLocalPosition * clampedDeltaTime + 
+									  transform.localPosition * (1f - clampedDeltaTime);
 
-			obstacleRenderer.material.color = targetColor * colorSlerpParam + 
-				obstacleRenderer.material.color * (1f - colorSlerpParam);
+			UpdateColor (targetColor * colorSlerpParam + 
+						 obstacleRenderer.material.color * (1f - colorSlerpParam));
 
-			//transform.Rotate (new Vector3(1,2,3).normalized * 50 * Time.deltaTime, Space.Self);
-			
-			
 		} else {
 			
 			visibility = false;

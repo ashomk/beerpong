@@ -7,6 +7,12 @@ public class BeerPong : MonoBehaviour {
 	public GameObject Canvas;
 	public GameStateBehaviour GamePlay;
 
+	public delegate void ActivateGamePlayEvent();
+
+	//This event is called when game play is active 
+	public event ActivateGamePlayEvent ActivateGamePlay;
+
+
 	public Vector3 gravity = new Vector3 (0, -5f, 0);
 
 	public bool isActive {
@@ -40,7 +46,8 @@ public class BeerPong : MonoBehaviour {
 			GameElements.SetActive (true);
 		}
 
-		GamePlay.OnPairingComplete ();
+
+		ActivateGamePlay ();
 
 		activationTime = Time.time;
 		isActive = true;
