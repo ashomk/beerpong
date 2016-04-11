@@ -23,7 +23,6 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 			currentPower = slider.value;
 			isTouchDown = false;
 
-//			SetVisible (true);
 		}
 	}
 
@@ -38,7 +37,6 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 
 			currentPower = slider.value;
 			isTouchDown = true;
-//			SetVisible (false);
 		}
 	}
 
@@ -77,7 +75,6 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 
 		slider.gameObject.SetActive (visibility);
 
-
 	}
 
 	//This method must clear the slider to a state as though the interaction hasn't been started
@@ -90,7 +87,7 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 
 		slider.transform.position = Camera.main.WorldToScreenPoint(GameObject.Find("Ball").transform.position);
 		Vector3 yPos = slider.transform.position;
-		yPos.y = slider.transform.position.y - 220;
+		yPos.y = slider.transform.position.y - 240;
 		slider.transform.position = yPos;
 
 		//change slider direction
@@ -114,16 +111,20 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 		Image fill = slider.transform.FindChild ("Fill Area/Fill").GetComponent<Image> ();
 		if (fill != null)
 		{
+			fill.sprite = Resources.Load<Sprite>("BeARPong_Slider_01");
 			fill.color = new Color (255, 164, 0, 0.1f);
-
 		}
+
+
 
 		Image fill1 = slider.transform.FindChild ("Background").GetComponent<Image> ();
 		if (fill1 != null)
 		{
-			fill1.color = new Color (255, 164, 0, 0.1f);
+			fill1.sprite = Resources.Load<Sprite>("BeARPong_Slider_01");
+			fill1.color = new Color (255, 164, 0, 0f);
 
 		}
+
 
 
 
@@ -132,6 +133,26 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 
 
 
+	}
+
+	public void setSliderInitialState(float value){
+		Image fill1 = slider.transform.FindChild ("Background").GetComponent<Image> ();
+		if (fill1 != null)
+		{
+			fill1.sprite = Resources.Load<Sprite>("BeARPong_Slider_01");
+			fill1.color = new Color (255, 164, 0, value);
+
+		}
+
+//		Image fill = slider.transform.FindChild ("Handle Slide Area/Handle").GetComponent<Image> ();
+//		if (fill != null)
+//		{
+//			fill.color = new Color (255, 164, 0, value);
+//		}
+//
+//		Color fillColor = slider.image.color;
+//		fillColor.a = 0f;
+//		slider.image.color = fillColor;
 	}
 		
 }

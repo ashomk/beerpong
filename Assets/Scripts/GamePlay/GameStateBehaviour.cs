@@ -29,7 +29,7 @@ public class GameStateBehaviour : StateBehaviour {
 	private PowerUpRing hitRing;
 
 	
-	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.35f);
+	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.30f);
 	public static Vector3 tableLocalScale = new Vector3 (0.69f, 0.6125f, 1.955f);
 
 	public float gameStartTime {
@@ -396,7 +396,8 @@ public class GameStateBehaviour : StateBehaviour {
 	private void WaitToThrow_Enter () {
 		
 		BeerPongInput.Instance.SetVisible (true);
-		
+		BeerPongInput.Instance.setSliderInitialState (0);
+
 		RenderBallBeforeThrow ();
 		
 		//Reset only if user is not pressing the button
@@ -416,7 +417,8 @@ public class GameStateBehaviour : StateBehaviour {
 		}
 
 		if (BeerPongInput.Instance.isTouchDown) {
-			
+			BeerPongInput.Instance.setSliderInitialState (0.1f);
+
 			ChangeState (States.RenderTrail);
 		}
 	}
