@@ -12,8 +12,10 @@ GameObject:
   - 23: {fileID: 2395650}
   - 114: {fileID: 11429372}
   - 64: {fileID: 6422924}
+  - 114: {fileID: 11483134}
+  - 114: {fileID: 11400928}
   m_Layer: 0
-  m_Name: ring
+  m_Name: shotgunRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,6 +154,17 @@ MeshCollider:
   serializedVersion: 2
   m_Convex: 1
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &11400928
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdcf9a59737d1c44086110ff02d9de87, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &11429372
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -165,12 +178,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hoop: {fileID: 184660}
   ringFrequency: 1
-  ringType: 0
+  ringType: 1
   lastHitTime: 0
   rocketRingColor: {r: .53103447, g: 1, b: 0, a: 1}
   shotGunRingColor: {r: .639705896, g: .145588234, b: 0, a: 1}
   onHitColor: {r: 1, g: .808000028, b: 0, a: 1}
   onInvisibilityColor: {r: 0, g: 0, b: 0, a: 0}
+--- !u!114 &11483134
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerId: 0
+  group: 0
+  prefixBackup: -1
+  observed: {fileID: 0}
+  synchronization: 3
+  onSerializeTransformOption: 3
+  onSerializeRigidBodyOption: 2
+  ownershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 11400928}
+  ObservedComponentsFoldoutOpen: 1
+  viewIdField: 0
+  instantiationId: -1
+  isRuntimeInstantiated: 0
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -213,6 +251,18 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: shotGunRingColor.r
       value: .639705896
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: synchronization
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: ObservedComponents.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400928}
+    - target: {fileID: 0}
+      propertyPath: ringType
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

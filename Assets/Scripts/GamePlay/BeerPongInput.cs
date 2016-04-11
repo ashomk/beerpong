@@ -83,9 +83,9 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 		slider.value = 0;
 	}
 
-	public void setSliderPosition(){
+	public void setSliderPosition(GameObject ball){
 
-		slider.transform.position = Camera.main.WorldToScreenPoint(GameObject.Find("Ball").transform.position);
+		slider.transform.position = Camera.main.WorldToScreenPoint(ball.transform.position);
 		Vector3 yPos = slider.transform.position;
 		yPos.y = slider.transform.position.y - 240;
 		slider.transform.position = yPos;

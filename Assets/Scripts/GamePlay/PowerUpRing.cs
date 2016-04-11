@@ -25,9 +25,13 @@ public class PowerUpRing : MonoBehaviour {
 
 	public float lastHitTime = 0;
 
-	private bool visibility = false;
+	public bool visibility = false;
 	public Color rocketRingColor = Color.green;
 	public Color shotGunRingColor = Color.red;
+
+	private Renderer hoopRenderer;
+	private Renderer thisRenderer;
+	private Collider thisCollider;
 
 	private Color baseColor {
 		
@@ -42,15 +46,22 @@ public class PowerUpRing : MonoBehaviour {
 
 	private float offSetTime = 20;
 
+	public bool isMyPhotonView = false;
+	private GameStateBehaviour gamePlay;
+	private BeerPong beerPong;
+	
 	void Start () {
-
-		transform.localPosition = (GameStateBehaviour.tableLocalScale.y + hoop.GetComponent<Renderer> ().bounds.size.y) * Vector3.up;
-		transform.localRotation = transform.rotation;
-		hoop.GetComponent<Renderer> ().material.color = onInvisibilityColor;
+		
+		beerPong = FindObjectOfType<BeerPong> ();
+		gamePlay = FindObjectOfType<GameStateBehaviour> ();
+		hoopRenderer = hoop.GetComponent<Renderer> ();
+		thisRenderer = GetComponent <Renderer> ();
+		thisCollider = GetComponent <Collider> ();
+		hoopRenderer.material.color = onInvisibilityColor;
 		offSetTime += Random.Range (0, 20f);
 	}
 
-	private void UpdateVisibility() {
+	public void UpdateVisibility() {
 
 		if (!visibility && (Time.time - visibilityChangeTime) < DISABLE_WAIT_TIME) {
 
@@ -62,17 +73,45 @@ public class PowerUpRing : MonoBehaviour {
 			childTrans.gameObject.SetActive (visibility);
 		}
 
-		GetComponent <Renderer> ().enabled = visibility;
-		GetComponent <Collider> ().enabled = visibility;
+		thisRenderer.enabled = visibility;
+		thisCollider.enabled = visibility;
+	}
+
+	public Color currentColor {
+		
+		get {
+			
+			return hoopRenderer.material.color;
+		}
+	}
+	
+	public void UpdateColor (Color color) {
+
+		hoopRenderer.material.color = color;
+
 	}
 
 	void Update()
 	{
+		if (!isMyPhotonView) {
+
+			return;
+		}
+
+		transform.localRotation = Quaternion.Euler (0, 90, 90);
+
+		if (!gamePlay.isMyTurn) {
+
+			visibility = false;
+			UpdateVisibility ();
+			return;
+		}
+
 		UpdateVisibility ();
 
-		float lastStartTime = Mathf.Max (GetComponentInParent<BeerPong> ().activationTime,
-		                                 FindObjectOfType<GameStateBehaviour> ().gameStartTime);
-		if (GetComponentInParent<BeerPong> ().isActive &&
+		float lastStartTime = Mathf.Max (beerPong.activationTime,
+		                                 gamePlay.gameStartTime);
+		if (beerPong.isActive &&
 		    Time.time - lastStartTime > offSetTime) {
 
 			if (visiblityToggleTime < Time.time) {
@@ -84,8 +123,8 @@ public class PowerUpRing : MonoBehaviour {
 			}
 
 			//Wait for HIT_WAIT_TIME, if necessary
-			Vector3 targetLocalPosition = (GameStateBehaviour.tableLocalScale.y + hoop.GetComponent<Renderer> ().bounds.size.y) * Vector3.up;
-			Color targetColor = hoop.GetComponent<Renderer> ().material.color;
+			Vector3 targetLocalPosition = (GameStateBehaviour.tableLocalScale.y + hoopRenderer.bounds.size.y) * Vector3.up;
+			Color targetColor = hoopRenderer.material.color;
 			float colorSlerpParam = Time.deltaTime;
 			float deltaSlerpFactor = 1f;
 			if (visibility) {
@@ -116,8 +155,8 @@ public class PowerUpRing : MonoBehaviour {
 			float clampedDeltaTime = Mathf.Clamp01 (Time.deltaTime) * deltaSlerpFactor;
 			transform.localPosition =   targetLocalPosition * clampedDeltaTime + 
 										transform.localPosition * (1f - clampedDeltaTime);
-			hoop.GetComponent<Renderer> ().material.color = targetColor * colorSlerpParam + 
-															hoop.GetComponent<Renderer> ().material.color * (1f - colorSlerpParam);
+			UpdateColor (targetColor * colorSlerpParam + 
+			             hoopRenderer.material.color * (1f - colorSlerpParam));
 
 
 		} else {
