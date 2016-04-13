@@ -35,7 +35,7 @@ public class GameStateBehaviour : StateBehaviour {
 	private PowerUpRing hitRing;
 	private BeerPong beerPongInstance;
 	
-	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.35f);
+	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.30f);
 	public static Vector3 tableLocalScale = new Vector3 (0.69f, 0.6125f, 1.955f);
 
 	public static float OBJECT_DEFAULT_POSITION = 5;
@@ -461,7 +461,8 @@ public class GameStateBehaviour : StateBehaviour {
 		isMyTurn = true;
 		Ball.GetComponent<Rigidbody> ().isKinematic = true;
 		BeerPongInput.Instance.SetVisible (true);
-		
+		BeerPongInput.Instance.setSliderInitialState (0);
+
 		RenderBallBeforeThrow ();
 		
 		//Reset only if user is not pressing the button
@@ -481,7 +482,8 @@ public class GameStateBehaviour : StateBehaviour {
 		}
 
 		if (BeerPongInput.Instance.isTouchDown) {
-			
+			BeerPongInput.Instance.setSliderInitialState (0.1f);
+
 			ChangeState (States.RenderTrail);
 		}
 	}
