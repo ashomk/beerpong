@@ -14,6 +14,8 @@ GameObject:
   - 64: {fileID: 6422924}
   - 114: {fileID: 11483134}
   - 114: {fileID: 11400928}
+  - 114: {fileID: 11402904}
+  - 82: {fileID: 8201472}
   m_Layer: 0
   m_Name: rocketRing
   m_TagString: Untagged
@@ -58,7 +60,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184660}
-  m_LocalRotation: {x: -8.19563937e-08, y: -.707106709, z: 8.94069672e-08, w: .707106829}
+  m_LocalRotation: {x: -8.19564008e-08, y: -.707106769, z: 8.94069743e-08, w: .707106888}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 13.5790548, y: 68.4640884, z: 13.5790586}
   m_Children: []
@@ -82,9 +84,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_MinimumChartSize: 4
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
@@ -108,9 +108,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 1
-  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_MinimumChartSize: 4
   m_AutoUVMaxDistance: .5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
@@ -154,6 +152,76 @@ MeshCollider:
   serializedVersion: 2
   m_Convex: 1
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!82 &8201472
+AudioSource:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178832}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: d3531af564288478194364e171d5e568, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
 --- !u!114 &11400928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -165,6 +233,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdcf9a59737d1c44086110ff02d9de87, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &11402904
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178832}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 683cb4212c1e1754eb856c9d39c1b743, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volumeFactor: 1
 --- !u!114 &11429372
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -180,10 +260,12 @@ MonoBehaviour:
   ringFrequency: 1
   ringType: 0
   lastHitTime: 0
+  visibility: 0
   rocketRingColor: {r: .53103447, g: 1, b: 0, a: 1}
   shotGunRingColor: {r: .639705896, g: .145588234, b: 0, a: 1}
   onHitColor: {r: 1, g: .808000028, b: 0, a: 1}
   onInvisibilityColor: {r: 0, g: 0, b: 0, a: 0}
+  isMyPhotonView: 0
 --- !u!114 &11483134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -260,6 +342,14 @@ Prefab:
       propertyPath: ObservedComponents.Array.data[0]
       value: 
       objectReference: {fileID: 11400928}
+    - target: {fileID: 0}
+      propertyPath: m_PlayOnAwake
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: d3531af564288478194364e171d5e568, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 178832}
