@@ -35,7 +35,6 @@ public class BallMotionController : Singleton <BallMotionController> {
 
 		float discriminant = Mathf.Sqrt (u.y * u.y + 2f * gravityVector.y * targetY);
 		float timeLimit = (-u.y - discriminant) / gravityVector.y;
-		timeLimit *= 0.75f;
 
 		for(float t = 0; t < timeLimit; t += time_interval) {
 			Vector3 velocity = u + gravityVector * t;

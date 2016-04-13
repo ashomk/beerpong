@@ -28,7 +28,7 @@ public class GameStateBehaviour : StateBehaviour {
 	private Dictionary<int,GameObject> dictCup;
 	private List<GameObject> playRoundObject = new List<GameObject> ();
 
-	public float maxVelocity = 7f;
+	public static float MAX_VELOCITY = 7f;
 	public float ballReleaseTimeout = 4f;
 	public float hitCupLifetime = 3f;
 
@@ -37,6 +37,8 @@ public class GameStateBehaviour : StateBehaviour {
 	
 	public Vector3 relativeBallStartLocalPosition = new Vector3 (0.13f, 0f, 0.35f);
 	public static Vector3 tableLocalScale = new Vector3 (0.69f, 0.6125f, 1.955f);
+
+	public static float OBJECT_DEFAULT_POSITION = 5;
 
 	public float gameStartTime {
 	
@@ -48,7 +50,11 @@ public class GameStateBehaviour : StateBehaviour {
 	private Vector3 rocketRingHitTarget;
 	
 	private Transform gameCameraTransform;
-	private Vector3 throwDirection = Vector3.forward;
+	public Vector3 throwDirection {
+
+		get;
+		private set;
+	}
 	private Quaternion beerPongTableDefaultRotation = Quaternion.identity;
 	private bool didSetDefaultRotation = false;
 	private Bounds defaultCupBounds = new Bounds();
@@ -86,7 +92,8 @@ public class GameStateBehaviour : StateBehaviour {
 	}
 	
 	void Awake () {
-		
+
+		throwDirection = Vector3.forward;
 		Initialize <States> ();
 
 		InvalidPlayerPositionText.SetActive (false);
@@ -161,7 +168,7 @@ public class GameStateBehaviour : StateBehaviour {
 
 	private void SetUpBall () {
 
-		Ball = PhotonNetwork.Instantiate ("Ball", Vector3.down * 50, Quaternion.identity, 0);
+		Ball = PhotonNetwork.Instantiate ("Ball", Vector3.down * 5, Quaternion.identity, 0);
 	}
 
 	private void SetUpCups () {
@@ -256,13 +263,13 @@ public class GameStateBehaviour : StateBehaviour {
 
 	private void SetUpRings () {
 		
-		rocketRing = PhotonNetwork.Instantiate ("rocketRing", Vector3.down * 50, Quaternion.identity, 0);
+		rocketRing = PhotonNetwork.Instantiate ("rocketRing", Vector3.down * OBJECT_DEFAULT_POSITION, Quaternion.identity, 0);
 		rocketRing.transform.localPosition = new Vector3(0,tableLocalScale.y*3/2,0);
 		PowerUpRing powerUpRing = rocketRing.GetComponent<PowerUpRing> ();
 		powerUpRing.isMyPhotonView = true;
 		powerUpRing.OnHitRing += OnHitRing;
 
-		shotGunRing = PhotonNetwork.Instantiate ("shotgunRing", Vector3.down * 50, Quaternion.identity, 0);
+		shotGunRing = PhotonNetwork.Instantiate ("shotgunRing", Vector3.down * OBJECT_DEFAULT_POSITION, Quaternion.identity, 0);
 		shotGunRing.transform.localPosition = new Vector3(0,tableLocalScale.y*3/2,0);
 		powerUpRing = shotGunRing.GetComponent<PowerUpRing> ();
 		powerUpRing.isMyPhotonView = true;
@@ -273,7 +280,7 @@ public class GameStateBehaviour : StateBehaviour {
 
 		for (int i = 0; i < 2; i ++) {
 
-			GameObject obstacle = PhotonNetwork.Instantiate ("Obstacle", Vector3.down * 50, Quaternion.identity, 0);
+			GameObject obstacle = PhotonNetwork.Instantiate ("Obstacle", Vector3.down * OBJECT_DEFAULT_POSITION, Quaternion.identity, 0);
 			obstacle.GetComponent<Obstacle> ().isMyPhotonView = true;
 			obstacles.Add (obstacle);
 			obstacle.transform.parent = BoardwalkPong.transform;
@@ -509,8 +516,8 @@ public class GameStateBehaviour : StateBehaviour {
 		if (BeerPongInput.Instance.isTouchDown) {
 
 			SetThrowDirection ();
-			Vector3 initialVelocity = BeerPongInput.Instance.currentPower * throwDirection.normalized * maxVelocity;
-			float targetY = Ball.transform.position.y - BoardwalkPong.transform.position.y - tableLocalScale.y;
+			Vector3 initialVelocity = BeerPongInput.Instance.currentPower * throwDirection.normalized * MAX_VELOCITY;
+			float targetY = Ball.transform.position.y - BoardwalkPong.transform.position.y;
 			BallMotionController.Instance.RenderTrail (initialVelocity, Ball.transform.position, targetY);
 		}
 	}
@@ -569,7 +576,7 @@ public class GameStateBehaviour : StateBehaviour {
 		ballThrowStartTime = Time.time;
 
 		Ball.GetComponent<Rigidbody> ().isKinematic = false;
-		Ball.GetComponent<Rigidbody>().velocity = throwDirection.normalized * maxVelocity * BeerPongInput.Instance.currentPower;
+		Ball.GetComponent<Rigidbody>().velocity = throwDirection.normalized * MAX_VELOCITY * BeerPongInput.Instance.currentPower;
 	}
 	
 	private void BallReleased_Update () {
@@ -768,7 +775,7 @@ public class GameStateBehaviour : StateBehaviour {
 			
 		} else {
 			
-			Ball.transform.position += maxVelocity * 0.5f * Time.deltaTime * (rocketRingHitTarget - Ball.transform.position) * speedFactor;
+			Ball.transform.position += MAX_VELOCITY * 0.5f * Time.deltaTime * (rocketRingHitTarget - Ball.transform.position) * speedFactor;
 		}
 	}
 
