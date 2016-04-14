@@ -47,9 +47,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 178832}
-  m_LocalRotation: {x: .500000119, y: .5, z: .49999997, w: .499999911}
+  m_LocalRotation: {x: 0.5000001, y: 0.5, z: 0.49999997, w: 0.4999999}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .150114998, y: .0300229993, z: .150114998}
+  m_LocalScale: {x: 0.150115, y: 0.030023, z: 0.150115}
   m_Children:
   - {fileID: 499888}
   m_Father: {fileID: 0}
@@ -60,9 +60,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184660}
-  m_LocalRotation: {x: -8.19564008e-08, y: -.707106769, z: 8.94069743e-08, w: .707106888}
+  m_LocalRotation: {x: -0.0000000819564, y: -0.70710677, z: 0.000000089406974, w: 0.7071069}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 13.5790548, y: 68.4640884, z: 13.5790586}
+  m_LocalScale: {x: 13.579055, y: 68.46409, z: 13.579059}
   m_Children: []
   m_Father: {fileID: 411380}
   m_RootOrder: 0
@@ -84,8 +84,10 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
@@ -108,8 +110,10 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
-  m_AutoUVMaxDistance: .5
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
@@ -161,7 +165,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 3d280a832814b47309167cceaaa231cb, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 0c9ca81730ec1b9418f2436d66f2230c, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -192,6 +196,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+    m_RotationOrder: 4
   panLevelCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -202,6 +207,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+    m_RotationOrder: 0
   spreadCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -212,6 +218,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+    m_RotationOrder: 0
   reverbZoneMixCustomCurve:
     serializedVersion: 2
     m_Curve:
@@ -222,6 +229,7 @@ AudioSource:
       tangentMode: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
+    m_RotationOrder: 0
 --- !u!114 &11400928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -261,9 +269,9 @@ MonoBehaviour:
   ringType: 1
   lastHitTime: 0
   visibility: 0
-  rocketRingColor: {r: .53103447, g: 1, b: 0, a: 1}
-  shotGunRingColor: {r: .639705896, g: .145588234, b: 0, a: 1}
-  onHitColor: {r: 1, g: .808000028, b: 0, a: 1}
+  rocketRingColor: {r: 0.53103447, g: 1, b: 0, a: 1}
+  shotGunRingColor: {r: 0.6397059, g: 0.14558823, b: 0, a: 1}
+  onHitColor: {r: 1, g: 0.808, b: 0, a: 1}
   onInvisibilityColor: {r: 0, g: 0, b: 0, a: 0}
   isMyPhotonView: 0
 --- !u!114 &11483134
@@ -353,7 +361,7 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: m_audioClip
       value: 
-      objectReference: {fileID: 8300000, guid: 3d280a832814b47309167cceaaa231cb, type: 3}
+      objectReference: {fileID: 8300000, guid: d3531af564288478194364e171d5e568, type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 178832}
