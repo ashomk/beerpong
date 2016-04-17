@@ -66,8 +66,9 @@ public class Obstacle : MonoBehaviour {
 		UpdateVisibility ();
 		
 		if (GetComponentInParent<BeerPong> ().isActive &&
-		    Time.time - GetComponentInParent<BeerPong> ().activationTime > 60.0f + randomActivaitionOffset) {
-			
+		    //DOOT//Time.time - GetComponentInParent<BeerPong> ().activationTime > 60.0f + randomActivaitionOffset) {
+			Time.time - GetComponentInParent<BeerPong> ().activationTime > 0) {
+
 			if (visiblityToggleTime < Time.time) {
 				
 				visibility = !visibility;
