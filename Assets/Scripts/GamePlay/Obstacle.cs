@@ -62,6 +62,13 @@ public class Obstacle : MonoBehaviour {
 				visibility = !visibility;
 				visiblityToggleTime = Time.time + Random.Range (3.0f, 10.0f);
 				visibilityChangeTime = Time.time;
+
+				if (visibility) {
+					// get a reference to the animator on this gameObject
+					var animator = gameObject.GetComponent<Animator>();
+					animator.SetBool("isHit", false);
+					animator.Rebind ();
+				}
 				
 			}
 			
@@ -108,5 +115,13 @@ public class Obstacle : MonoBehaviour {
 			
 			visibility = false;
 		}
+	}
+
+	public void MakeVanish(){
+
+		visibility = false;
+		visiblityToggleTime = Time.time + Random.Range (3.0f, 10.0f);
+		visibilityChangeTime = Time.time;
+
 	}
 }

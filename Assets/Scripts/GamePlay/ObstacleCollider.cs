@@ -22,5 +22,15 @@ public class ObstacleCollider : MonoBehaviour {
 		//animator.SetTrigger("tossTrigger");
 		animator.SetBool("isHit", true);
 
+		StartCoroutine(MakeVanish());
+
+
+
+	}
+
+	IEnumerator MakeVanish()
+	{
+		yield return new WaitForSeconds(1.5f);
+		gameObject.transform.parent.gameObject.GetComponent<Obstacle> ().MakeVanish ();
 	}
 }
