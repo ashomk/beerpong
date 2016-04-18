@@ -33,7 +33,7 @@ GameObject:
   - 4: {fileID: 499888}
   - 33: {fileID: 3395406}
   - 23: {fileID: 2326930}
-  - 64: {fileID: 6404058}
+  - 64: {fileID: 6467760}
   m_Layer: 0
   m_Name: BeARPong_Ring_V.01
   m_TagString: Untagged
@@ -62,7 +62,7 @@ Transform:
   m_GameObject: {fileID: 184660}
   m_LocalRotation: {x: -0.0000000819564, y: -0.70710677, z: 0.000000089406974, w: 0.7071069}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 13.579055, y: 68.46409, z: 13.579059}
+  m_LocalScale: {x: 0.1357905, y: 0.6846409, z: 0.1357906}
   m_Children: []
   m_Father: {fileID: 411380}
   m_RootOrder: 0
@@ -131,19 +131,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184660}
-  m_Mesh: {fileID: 4300000, guid: 435efbe02218da4489d5d12cb5fbae8d, type: 3}
---- !u!64 &6404058
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 184660}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Convex: 1
-  m_Mesh: {fileID: 4300000, guid: 435efbe02218da4489d5d12cb5fbae8d, type: 3}
+  m_Mesh: {fileID: 4300000, guid: d34803c4bc518cd41833513ca8b634bc, type: 3}
 --- !u!64 &6422924
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -156,6 +144,18 @@ MeshCollider:
   serializedVersion: 2
   m_Convex: 1
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!64 &6467760
+MeshCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 184660}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Convex: 0
+  m_Mesh: {fileID: 4300000, guid: d34803c4bc518cd41833513ca8b634bc, type: 3}
 --- !u!82 &8242842
 AudioSource:
   m_ObjectHideFlags: 1

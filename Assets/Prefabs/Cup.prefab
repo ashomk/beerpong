@@ -26,9 +26,9 @@ GameObject:
   - 4: {fileID: 494336}
   - 33: {fileID: 3389230}
   - 23: {fileID: 2325042}
-  - 64: {fileID: 6411342}
   - 114: {fileID: 11420772}
   - 82: {fileID: 8203728}
+  - 64: {fileID: 6448466}
   m_Layer: 0
   m_Name: BeARPong_Cup_V.02.06
   m_TagString: Untagged
@@ -44,7 +44,7 @@ Transform:
   m_GameObject: {fileID: 105976}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.24112323, y: 0.17782825, z: 0.24112318}
+  m_LocalScale: {x: 0.02411232, y: 0.01778283, z: 0.02411232}
   m_Children:
   - {fileID: 494336}
   m_Father: {fileID: 0}
@@ -57,7 +57,7 @@ Transform:
   m_GameObject: {fileID: 152092}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0.005, y: 0.432, z: 0}
-  m_LocalScale: {x: 5.197716, y: 7.047757, z: 5.1977177}
+  m_LocalScale: {x: 0.5197716, y: 0.7047757, z: 0.5197718}
   m_Children: []
   m_Father: {fileID: 435312}
   m_RootOrder: 0
@@ -93,8 +93,8 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 152092}
-  m_Mesh: {fileID: 4300000, guid: 70043568d1ff0a540a5b9085111baea0, type: 3}
---- !u!64 &6411342
+  m_Mesh: {fileID: 4300000, guid: 1d7550803723f6f42a09e8373ad8abc5, type: 3}
+--- !u!64 &6448466
 MeshCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -105,7 +105,7 @@ MeshCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Convex: 0
-  m_Mesh: {fileID: 4300000, guid: 70043568d1ff0a540a5b9085111baea0, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 1d7550803723f6f42a09e8373ad8abc5, type: 3}
 --- !u!82 &8203728
 AudioSource:
   m_ObjectHideFlags: 1
