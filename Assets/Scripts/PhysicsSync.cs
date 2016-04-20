@@ -73,13 +73,21 @@ public class PhysicsSync : Photon.MonoBehaviour {
 
 			if (powerUpRing != null) {
 
-				powerUpRing.UpdateColor (Color.Lerp (nextColor, powerUpRing.currentColor, 0.5f));
+				powerUpRing.currentColor = Color.Lerp (nextColor, powerUpRing.currentColor, 0.5f);
+				if (powerUpRing.visibility != nextVisibility) {
+				
+					powerUpRing.visiblityToggleTime = Time.time;
+				}
 				powerUpRing.visibility = nextVisibility;
 				powerUpRing.UpdateVisibility ();
 
 			} else if (obstacle != null) {
 				
-				obstacle.UpdateColor (Color.Lerp (nextColor, obstacle.currentColor, 0.5f));
+				obstacle.currentColor = Color.Lerp (nextColor, obstacle.currentColor, 0.5f);
+				if (obstacle.visibility != nextVisibility) {
+
+					obstacle.visiblityToggleTime = Time.time;
+				}
 				obstacle.visibility = nextVisibility;
 				obstacle.UpdateVisibility ();
 			

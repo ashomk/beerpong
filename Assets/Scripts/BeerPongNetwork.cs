@@ -146,10 +146,9 @@ public class BeerPongNetwork : Singleton<BeerPongNetwork> {
 
 	void ShowConnectingGUI()
 	{
-		GUILayout.BeginArea(new Rect((Screen.width - 400) / 2, (Screen.height - 300) / 2, 400, 300));
+		GUILayout.BeginArea(new Rect((Screen.width - 100) / 2, (Screen.height - 200) / 2, 400, 300));
 
-		GUILayout.Label("Connecting to Photon server.");
-		GUILayout.Label("Hint: This demo uses a settings file and logs the server address to the console.");
+		GUILayout.Label("Connecting...");
 
 		GUILayout.EndArea();
 	}
@@ -231,9 +230,9 @@ public class BeerPongNetwork : Singleton<BeerPongNetwork> {
 	void OnPhotonRandomJoinFailed (object[] codeAndMsg) {
 
 		Debug.Log ("Failed joining room");
-		foreach (string str in codeAndMsg) {
+		foreach (object str in codeAndMsg) {
 
-			Debug.Log (str);
+			Debug.Log (str.ToString ());
 		}
 
 		isPlayerOne = true;

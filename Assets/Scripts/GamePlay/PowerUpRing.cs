@@ -20,7 +20,7 @@ public class PowerUpRing : MonoBehaviour {
 
 	public Type ringType = Type.ROCKET;
 
-	private float visiblityToggleTime = 0;
+	public float visiblityToggleTime = 0;
 	private float visibilityChangeTime = 0;
 
 	public float lastHitTime = 0;
@@ -83,14 +83,13 @@ public class PowerUpRing : MonoBehaviour {
 			
 			return hoopRenderer.material.color;
 		}
+
+		set {
+			
+			hoopRenderer.material.color = value;
+		}
 	}
 	
-	public void UpdateColor (Color color) {
-
-		hoopRenderer.material.color = color;
-
-	}
-
 	void Update()
 	{
 		if (!isMyPhotonView) {
@@ -155,8 +154,8 @@ public class PowerUpRing : MonoBehaviour {
 			float clampedDeltaTime = Mathf.Clamp01 (Time.deltaTime) * deltaSlerpFactor;
 			transform.localPosition =   targetLocalPosition * clampedDeltaTime + 
 										transform.localPosition * (1f - clampedDeltaTime);
-			UpdateColor (targetColor * colorSlerpParam + 
-			             hoopRenderer.material.color * (1f - colorSlerpParam));
+			currentColor =	targetColor * colorSlerpParam + 
+			             	hoopRenderer.material.color * (1f - colorSlerpParam);
 
 
 		} else {

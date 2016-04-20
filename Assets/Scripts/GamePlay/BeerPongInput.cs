@@ -112,10 +112,8 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 		if (fill != null)
 		{
 			fill.sprite = Resources.Load<Sprite>("BeARPong_Slider_01");
-			fill.color = new Color (255, 164, 0, 0.1f);
+			fill.color = new Color (255, 164, 0, 0f);
 		}
-
-
 
 		Image fill1 = slider.transform.FindChild ("Background").GetComponent<Image> ();
 		if (fill1 != null)
@@ -124,18 +122,10 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 			fill1.color = new Color (255, 164, 0, 0f);
 
 		}
-
-
-
-
-//		SetVisible (false);
-
-
-
-
 	}
 
 	public void setSliderInitialState(float value){
+		
 		Image fill1 = slider.transform.FindChild ("Background").GetComponent<Image> ();
 		if (fill1 != null)
 		{
@@ -143,16 +133,6 @@ public class BeerPongInput : Singleton <BeerPongInput>{
 			fill1.color = new Color (255, 164, 0, value);
 
 		}
-
-//		Image fill = slider.transform.FindChild ("Handle Slide Area/Handle").GetComponent<Image> ();
-//		if (fill != null)
-//		{
-//			fill.color = new Color (255, 164, 0, value);
-//		}
-//
-//		Color fillColor = slider.image.color;
-//		fillColor.a = 0f;
-//		slider.image.color = fillColor;
 	}
 		
 }

@@ -285,6 +285,12 @@ public class GameStateBehaviour : StateBehaviour {
 			obstacles.Add (obstacle);
 			obstacle.transform.parent = BoardwalkPong.transform;
 			obstacle.transform.localPosition = new Vector3 (0, tableLocalScale.y * 3 / 2, 0);
+
+			//Change Transition
+			if (i % 2 == 0) {
+				var animator = obstacle.GetComponent<Animator> ();
+				animator.SetBool ("changeTransition", true);
+			}
 		}
 	}
 	
@@ -482,7 +488,7 @@ public class GameStateBehaviour : StateBehaviour {
 		}
 
 		if (BeerPongInput.Instance.isTouchDown) {
-			BeerPongInput.Instance.setSliderInitialState (0.1f);
+			BeerPongInput.Instance.setSliderInitialState (0.15f);
 
 			ChangeState (States.RenderTrail);
 		}
