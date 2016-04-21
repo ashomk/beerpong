@@ -106,6 +106,8 @@ public class PowerUpRing : MonoBehaviour {
 			return;
 		}
 
+		float ringZ = ringType == Type.ROCKET ? -0.02f : 0.02f;
+
 		UpdateVisibility ();
 
 		float lastStartTime = Mathf.Max (beerPong.activationTime,
@@ -122,7 +124,7 @@ public class PowerUpRing : MonoBehaviour {
 			}
 
 			//Wait for HIT_WAIT_TIME, if necessary
-			Vector3 targetLocalPosition = (GameStateBehaviour.tableLocalScale.y + hoopRenderer.bounds.size.y) * Vector3.up;
+			Vector3 targetLocalPosition = new Vector3 (ringType == Type.ROCKET ? 0.7f : -0.7f, GameStateBehaviour.tableLocalScale.y *2f, ringZ);
 			Color targetColor = hoopRenderer.material.color;
 			float colorSlerpParam = Time.deltaTime;
 			float deltaSlerpFactor = 1f;
@@ -141,9 +143,10 @@ public class PowerUpRing : MonoBehaviour {
 					deltaSlerpFactor = 0.1f;
 				}
 
-				targetLocalPosition = new Vector3 (0.7f * Mathf.Sin (Time.time * ringFrequency + offSetTime), 
+
+				targetLocalPosition = new Vector3 (0.7f * Mathf.Sin ((Time.time * ringFrequency + offSetTime) * (ringType == Type.ROCKET ? 1f : -1f)), 
 				                                   GameStateBehaviour.tableLocalScale.y * 2f, 
-				                                   0);
+				                                   ringZ);
 
 			} else {
 			

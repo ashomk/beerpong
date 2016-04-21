@@ -33,7 +33,6 @@ GameObject:
   - 4: {fileID: 499888}
   - 33: {fileID: 3395406}
   - 23: {fileID: 2326930}
-  - 64: {fileID: 6467760}
   m_Layer: 0
   m_Name: BeARPong_Ring_V.01
   m_TagString: Untagged
@@ -60,9 +59,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184660}
-  m_LocalRotation: {x: -0.0000000819564, y: -0.70710677, z: 0.000000089406974, w: 0.7071069}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1357905, y: 0.6846409, z: 0.1357906}
+  m_LocalRotation: {x: 0.5, y: 0.5000001, z: -0.5, w: 0.49999994}
+  m_LocalPosition: {x: -0.736, y: 7.2, z: -0}
+  m_LocalScale: {x: 22.645039, y: 22.64509, z: 113.22514}
   m_Children: []
   m_Father: {fileID: 411380}
   m_RootOrder: 0
@@ -76,7 +75,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 0
   m_Materials:
-  - {fileID: 2100000, guid: f3b3bc687b34fcc4dae03145700af276, type: 2}
+  - {fileID: 2100000, guid: ce128a666d663e14bb716cad3b0cd8e8, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 0
@@ -131,7 +130,7 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 184660}
-  m_Mesh: {fileID: 4300000, guid: d34803c4bc518cd41833513ca8b634bc, type: 3}
+  m_Mesh: {fileID: 4300000, guid: 74e95ee8343a8a84dbbf0b40c9b0ac7a, type: 3}
 --- !u!64 &6422924
 MeshCollider:
   m_ObjectHideFlags: 1
@@ -144,18 +143,6 @@ MeshCollider:
   serializedVersion: 2
   m_Convex: 1
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
---- !u!64 &6467760
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 184660}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Convex: 0
-  m_Mesh: {fileID: 4300000, guid: d34803c4bc518cd41833513ca8b634bc, type: 3}
 --- !u!82 &8242842
 AudioSource:
   m_ObjectHideFlags: 1
@@ -267,6 +254,7 @@ MonoBehaviour:
   hoop: {fileID: 184660}
   ringFrequency: 1
   ringType: 1
+  visiblityToggleTime: 0
   lastHitTime: 0
   visibility: 0
   rocketRingColor: {r: 0.53103447, g: 1, b: 0, a: 1}

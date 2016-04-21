@@ -140,7 +140,7 @@ public class Obstacle : MonoBehaviour {
 			}
 			
 			//Wait for HIT_WAIT_TIME, if necessary
-			Vector3 targetLocalPosition = (GameStateBehaviour.tableLocalScale.y + obstacleRenderer.bounds.size.y) * Vector3.up;
+			Vector3 targetLocalPosition = new Vector3 (-0.7f, GameStateBehaviour.tableLocalScale.y *2f, 0);
 			Color targetColor = currentColor;
 			float colorSlerpParam = Time.deltaTime;
 			float deltaSlerpFactor = 1f;
